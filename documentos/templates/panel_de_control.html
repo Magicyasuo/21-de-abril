@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Archivos del Sarare - Inicio</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<style>.card {
+    height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Uniformidad en la distribución del contenido */
+}
+html, body {
+    height: 100%; /* Asegura que el HTML y el body ocupen toda la pantalla */
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Configura el flujo de elementos en columna */
+}
+
+ main {
+    flex: 1; /* Hace que el contenido principal ocupe todo el espacio disponible */
+} 
+
+footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    background: #003366;
+    color: #ffffff;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+</style>
+<body>
+<main>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+                Hospital del Sarare
+            </a>
+            <span class="navbar-text">
+                {% if request.user.is_authenticated %}
+                    Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+
+    <div class="container animate__animated animate__fadeInUp" id="mainContent">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Panel de control central de archivos</h1>
+
+        </div>
+
+        <!-- Indicadores Clave -->
+        <h2 class="section-title">Generalidades</h2>
+        <div class="row g-3 mb-4 justify-content-center" id="statsRow">
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'soporte' %}" class="text-decoration-none">
+                    <div class="stats-card">
+                        <i class="bi bi-book-half"></i>
+                        <h5>Soporte y manual</h5>
+                        <p class="text-muted">Manual de ususario y tutoriales</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'pagina_estadisticas' %}" class="text-decoration-none">
+                    <div class="stats-card">
+                        <i class="bi bi-bar-chart"></i>
+                        <h5>Estadísticas generales</h5>
+                        <p class="text-muted">Información sobre el estado de los registros</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'lista_fichas' %}" class="text-decoration-none">
+                    <div class="stats-card">
+                        <i class="bi bi-people"></i> <!-- Representa la colaboración o múltiples personas -->
+                        <h5>Tarjetero indice</h5>
+                        <p class="text-muted">Consultar información de pacientes</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Accesos Rápidos -->
+        <h2 class="section-title">Accesos Rápidos</h2>
+        <div class="row quick-links g-3 mb-4" id="quickLinksRow">
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'fuid_form' %}" class="text-decoration-none">
+                    <div class="card">
+                        <i class="bi bi-folder-plus"></i>
+                        <h5>Crear FUID</h5>
+                        <p>Iniciar nuevo formulario</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'fuid_list' %}" class="text-decoration-none">
+                    <div class="card">
+                        <i class="bi bi-card-list"></i>
+                        <h5>Lista de FUID</h5>
+                        <p>Ver todos los FUID generados</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <!-- <a href="{% url 'crear_registro' %}" class="text-decoration-none"> -->
+                    <div class="card">
+                        <i class="bi bi-file-earmark-plus"></i>
+                        <h5>Crear Registro</h5>
+                        <p>Agregar un nuevo documento</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'lista_registros' %}" class="text-decoration-none">
+                    <div class="card">
+                        <i class="bi bi-journal-text"></i>
+                        <h5>Lista de Registros</h5>
+                        <p>Consultar documentos archivados</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Login -->
+        {% if not request.user.is_authenticated %}
+        <div class="text-center">
+            <a href="{% url 'login' %}" class="btn login-btn">
+                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</main>
+    <!-- Footer -->
+    <footer>
+        <p>&copy; {{ current_year }} Hospital del Sarare - Central de Archivos del Sarare.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            anime({
+                targets: '.stats-card, .quick-links .card',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 800,
+                delay: anime.stagger(100),
+                easing: 'easeOutExpo'
+            });
+        });
+    </script>
+</body>
+</html>

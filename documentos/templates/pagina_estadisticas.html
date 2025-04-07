@@ -1,0 +1,318 @@
+{% extends "adminlte/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+.main-sidebar {
+    width: 0 !important; /* Reduce el ancho a cero */
+    min-width: 0 !important; /* Elimina restricciones de ancho mínimo */
+    max-width: 0 !important; /* Elimina restricciones de ancho máximo */
+    overflow: hidden !important; /* Oculta cualquier contenido interno */
+}
+
+.wrapper {
+    margin-left: 0 !important; /* Ajusta el diseño general */
+}
+
+.content-wrapper {
+    margin-left: 0 !important; /* Elimina el margen reservado */
+    width: 100% !important; /* Expande el contenido para ocupar todo el ancho */
+}
+
+.main-footer {
+    margin-left: 0 !important; /* Ajusta el pie de página */
+}
+
+  
+  .main-header {
+      display: none; /* Oculta la barra superior */
+  }
+  .custom-frame {
+    border: 5px solid #007bff; /* Color y grosor del marco */
+    border-radius: 15px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    margin: 20px auto; /* Espaciado externo centrado */
+    background-color: #f8f9fa; /* Fondo claro dentro del marco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+.main-footer {
+    display: none !important; /* Oculta el pie de página completamente */
+}
+ 
+  
+  </style>
+  
+<style>
+canvas {
+  max-height: 600px;
+  max-width: 200%;
+}
+
+/* Añadir sombras y bordes a las tarjetas */
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  border: 1px solid #ddd; /* Borde sutil */
+  border-radius: 10px; /* Bordes redondeados */
+  transition: transform 0.2s, box-shadow 0.2s; /* Transición al pasar el ratón */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Elevar ligeramente la tarjeta al pasar el ratón */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Intensificar la sombra */
+}
+
+/* Encabezados de las tarjetas */
+.card-header {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #f8f9fa; /* Fondo claro para contraste */
+  border-bottom: 1px solid #ddd; /* Línea divisoria */
+}
+
+.card-title {
+  font-weight: bold;
+  color: #333; /* Color del texto */
+}
+</style>
+
+{% block content-header %}
+<!-- Barra personalizada independiente -->
+<div class="custom-frame">
+  <div class="content-header">
+      <!-- Barra personalizada -->
+    <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+                Hospital del Sarare
+            </a>
+            <span class="navbar-text">
+                {% if request.user.is_authenticated %}
+                    Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+  </div>
+
+  <div class="content">
+      <div class="container-fluid">
+        <div class="content">
+          <div class="container-fluid">
+        
+            <!-- Tarjetas de resumen -->
+            <div class="row">
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-info card">
+                  <div class="inner">
+                    <h3 id="totalRegistros">0</h3>
+                    <p>Total de Registros</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-folder-open"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-success card">
+                  <div class="inner">
+                    <h3 id="totalFuids">0</h3>
+                    <p>Total de FUIDs</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-file-alt"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning card">
+                  <div class="inner">
+                    <h3 id="totalPacientes">0</h3>
+                    <p>Total de Pacientes</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary card">
+                  <div class="inner">
+                    <h3 id="pacientesActivos">0%</h3>
+                    <p>Pacientes Activos</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <!-- Gráficos alineados en una fila -->
+            <div class="row justify-content-center align-items-center">
+              <!-- Distribución por Género -->
+              <div class="col-lg-4">
+                <div class="card card-primary text-center">
+                  <div class="card-header">
+                    <h3 class="card-title">Distribución por Género</h3>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="chartPacientesGenero"></canvas>
+                  </div>
+                </div>
+              </div>
+            
+              <!-- Tipos de Identificación -->
+              <div class="col-lg-4">
+                <div class="card card-info text-center">
+                  <div class="card-header">
+                    <h3 class="card-title">Tipos de Identificación</h3>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="chartTipoIdentificacion"></canvas>
+                  </div>
+                </div>
+              </div>
+            
+              <!-- Distribución por Grupo de Edad -->
+              <div class="col-lg-4">
+                <div class="card card-secondary text-center">
+                  <div class="card-header">
+                    <h3 class="card-title">Distribución por Grupo de Edad</h3>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="chartPacientesEdad"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+          </div><!-- /.container-fluid -->
+        </div><!-- /.content -->
+      </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Peticiones a las APIs
+  Promise.all([
+    fetch("http://127.0.0.1:8000/registros/estadisticas/registros/").then(r => r.json()),
+    fetch("http://127.0.0.1:8000/registros/estadisticas/fuids/").then(r => r.json()),
+    fetch("http://127.0.0.1:8000/registros/estadisticas/pacientes/").then(r => r.json()),
+  ])
+  .then(([dataReg, dataFuid, dataPac]) => {
+    // Actualizar tarjetas
+    document.getElementById('totalRegistros').innerText = dataReg.total_registros || 0;
+    document.getElementById('totalFuids').innerText = dataFuid.total_fuids || 0;
+    document.getElementById('totalPacientes').innerText = dataPac.total_pacientes || 0;
+    document.getElementById('pacientesActivos').innerText = `${((dataPac.activos / dataPac.total_pacientes) * 100).toFixed(2)}%`;
+
+    // Gráfico: Distribución por Género
+    const ctxGenero = document.getElementById('chartPacientesGenero').getContext('2d');
+    const generoData = dataPac.por_genero || [];
+    const labelsGenero = generoData.map(item => item.sexo || 'N/A');
+    const dataGenero = generoData.map(item => item.cantidad);
+
+    new Chart(ctxGenero, {
+      type: 'pie',
+      data: {
+        labels: labelsGenero,
+        datasets: [{
+          data: dataGenero,
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'], // Colores variados
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { enabled: true },
+        }
+      }
+    });
+
+    // Gráfico: Tipos de Identificación
+    const ctxIdentificacion = document.getElementById('chartTipoIdentificacion').getContext('2d');
+    const idData = dataPac.por_tipo_identificacion || [];
+    const labelsId = idData.map(item => item.tipo_identificacion || 'N/A');
+    const dataId = idData.map(item => item.cantidad);
+
+    new Chart(ctxIdentificacion, {
+      type: 'bar',
+      data: {
+        labels: labelsId,
+        datasets: [{
+          label: 'Pacientes',
+          data: dataId,
+          backgroundColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+          ], // Colores distintos por barra
+          borderColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true },
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+          x: { title: { display: true, text: 'Tipo de Identificación' } }
+        }
+      }
+    });
+
+    // Gráfico: Distribución por Grupo de Edad
+    const ctxEdad = document.getElementById('chartPacientesEdad').getContext('2d');
+    const gruposEdad = dataPac.grupos_edad || {};
+    const labelsEdad = Object.keys(gruposEdad);
+    const dataEdad = Object.values(gruposEdad);
+
+    new Chart(ctxEdad, {
+      type: 'bar',
+      data: {
+        labels: labelsEdad,
+        datasets: [{
+          label: 'Pacientes',
+          data: dataEdad,
+          backgroundColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+          ], // Colores variados
+          borderColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true },
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+          x: { title: { display: true, text: 'Grupos de Edad' } }
+        }
+      }
+    });
+  })
+  .catch(error => {
+    console.error('Error al cargar estadísticas:', error);
+  });
+</script>
+
+{% endblock %}

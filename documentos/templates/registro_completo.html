@@ -1,0 +1,307 @@
+{% load custom_filters %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Visualización completa de todos los campos del registro documental con filtros por columna.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tabla Completa de Registros</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+
+</head>
+<style>.dataTables_filter {
+    display: none !important;
+}
+</style>
+<body>
+<main>
+    <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+                Hospital del Sarare
+            </a>
+            <span class="navbar-text">
+                {% if request.user.is_authenticated %}
+                    Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+
+    <div class="container-fluid animate__animated animate__fadeInUp" id="mainContainer">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="animate__animated animate__fadeInDown">Registros Completos</h1>
+            <a href="{% url 'crear_registro' %}" class="btn btn-success btn-sm animate__animated animate__fadeInDown animate__delay-1s">
+                <i class="bi bi-plus-circle"></i> Nuevo
+            </a>
+        </div>
+
+        <div class="table-responsive" style="overflow-x:auto;">
+            <table id="tablaCompleta" class="table table-striped table-bordered animate__animated animate__fadeInUp animate__delay-1s">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Número de Orden</th>
+                        <th style="width: 170px;">Código</th>
+                        <th style="width: 170px;">Código de Serie</th>
+                        <th style="width: 170px;">Código de Subserie</th>
+                        <th style="width: 200px;">Unidad Documental</th>
+                        <th style="width: 120px;">Fecha de Archivo</th>
+                        <th style="width: 120px;">Fecha Inicial</th>
+                        <th style="width: 120px;">Fecha Final</th>
+                        <th style="width: 60px;">Soporte Físico</th>
+                        <th style="width: 60px;">Soporte Electrónico</th>
+                        <th style="width: 100px;">Caja</th>
+                        <th style="width: 100px;">Carpeta</th>
+                        <th style="width: 120px;">Tomo/Legajo</th>
+                        <th style="width: 100px;">Número de Folios</th>
+                        <th style="width: 120px;">Tipo</th>
+                        <th style="width: 100px;">Cantidad</th>
+                        <th style="width: 150px;">Ubicación</th>
+                        <th style="width: 120px;">Cantidad Electrónica</th>
+                        <th style="width: 150px;">Tamaño Electrónico</th>
+                        <th style="width: 300px;">Notas</th>
+                        <th style="width: 150px;">Creado Por</th>
+                        <!-- <th style="width: 0px;"></th> -->
+                        <th style="width: 120px;">Fecha de Creación</th>
+                        <th style="width: 120px;">Estado</th>
+                        <th style="width: 0px;"></th>
+
+                        <th style="width: 150px;">Acciones</th>
+                    </tr>
+                    <tr>
+                        <th><input type="text" placeholder="Número de Orden" /></th>
+                        <th><input type="text" placeholder="Código" /></th>
+                        <th><input type="text" placeholder="Código de Serie" /></th>
+                        <th><input type="text" placeholder="Código de Subserie" /></th>
+                        <th><input type="text" placeholder="Unidad Documental" /></th>
+                        <th><input type="text" placeholder="Fecha de Archivo" /></th>
+                        <th><input type="text" placeholder="Fecha Inicial" /></th>
+                        <th><input type="text" placeholder="Fecha Final" /></th>
+                        <th><input type="text" placeholder="Soporte Físico" /></th>
+                        <th><input type="text" placeholder="Soporte Electrónico" /></th>
+                        <th><input type="text" placeholder="Caja" /></th>
+                        <th><input type="text" placeholder="Carpeta" /></th>
+                        <th><input type="text" placeholder="Tomo/Legajo" /></th>
+                        <th><input type="text" placeholder="Número de Folios" /></th>
+                        <th><input type="text" placeholder="Tipo" /></th>
+                        <th><input type="text" placeholder="Cantidad" /></th>
+                        <th><input type="text" placeholder="Ubicación" /></th>
+                        <th><input type="text" placeholder="Cant. Electrónica" /></th>
+                        <th><input type="text" placeholder="Tamaño Electrónico" /></th>
+                        <th><input type="text" placeholder="Notas" /></th>
+                        <th><input type="text" placeholder="Creado Por" /></th>
+                        <th><input type="text" placeholder="Fecha de Creación" /></th>
+                        <th><input type="text" placeholder="Estado" /></th>
+                        <th><input type="text" placeholder="Acciones" /></th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.numero_orden }}</td>
+                        <td>{{ registro.codigo }}</td>
+                        <td>{{ registro.codigo_serie }}</td>
+                        <td>{{ registro.codigo_subserie }}</td>
+                        <td>{{ registro.unidad_documental }}</td>
+                        <td>{{ registro.fecha_archivo }}</td>
+                        <td>{{ registro.fecha_inicial }}</td>
+                        <td>{{ registro.fecha_final }}</td>
+                        <td>{% if registro.soporte_fisico %}✔{% else %}✖{% endif %}</td>
+                        <td>{% if registro.soporte_electronico %}✔{% else %}✖{% endif %}</td>
+                        <td>{{ registro.caja }}</td>
+                        <td>{{ registro.carpeta }}</td>
+                        <td>{{ registro.tomo_legajo_libro }}</td>
+                        <td>{{ registro.numero_folios }}</td>
+                        <td>{{ registro.tipo }}</td>
+                        <td>{{ registro.cantidad }}</td>
+                        <td>{{ registro.ubicacion }}</td>
+                        <td>{{ registro.cantidad_documentos_electronicos }}</td>
+                        <td>{{ registro.tamano_documentos_electronicos }}</td>
+                        <td>{{ registro.notas }}</td>
+                        <td>{{ registro.creado_por }}</td>
+                        
+                        <td>{{ registro.fecha_creacion }}</td>
+                        <td class="{% if registro.Estado_archivo %}text-success fw-bold{% else %}text-danger fw-bold{% endif %}">
+                            {% if registro.Estado_archivo %}✔{% else %}✖{% endif %}
+                        </td>
+                        
+                        <td>
+                            <a href="{% url 'editar_registro' registro.id %}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+                        </td>
+                        
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="22" class="text-center">No hay registros disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+    <footer>
+        <p>&copy; {{ current_year }} Hospital del Sarare - Central de Archivos del Sarare.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script>
+$(document).ready(function() {
+    var table = $('#tablaCompleta').DataTable({
+        serverSide: true,
+        processing: true,
+        ajax: {
+            url: "{% url 'registros_api_con_id' %}",
+            type: "GET",
+            data: function(d) {
+                $('#tablaCompleta thead input').each(function(index) {
+                    d.columns[index].search.value = $(this).val();
+                });
+                console.log("🔍 Datos enviados a la API:", d);
+            },
+            error: function(xhr, error, thrown) {
+                console.error("❌ Error en la carga de datos:", xhr.responseText);
+            }
+        },
+        columns: [
+            { data: 'numero_orden' },
+            { data: 'codigo' },
+            { data: 'codigo_serie' },
+            { data: 'codigo_subserie' },
+            { data: 'unidad_documental' },
+            { data: 'fecha_archivo' },
+            { data: 'fecha_inicial' },
+            { data: 'fecha_final' },
+            { 
+                data: 'soporte_fisico',
+                render: function(data) { return data ? '✔' : '✖'; }
+            },
+            { 
+                data: 'soporte_electronico',
+                render: function(data) { return data ? '✔' : '✖'; }
+            },
+            { data: 'caja' },
+            { data: 'carpeta' },
+            { data: 'tomo_legajo_libro' },
+            { data: 'numero_folios' },
+            { data: 'tipo' },
+            { data: 'cantidad' },
+            { data: 'ubicacion' },
+            { data: 'cantidad_documentos_electronicos' },
+            { data: 'tamano_documentos_electronicos' },
+            { data: 'notas' },
+            { data: 'creado_por' },
+            { data: 'fecha_creacion' },
+            { 
+                data: 'Estado_archivo',
+                render: function(data) {
+                    return data === "✔" ? '<span class="text-success fw-bold">✔</span>' : '<span class="text-danger fw-bold">✖</span>';
+                }
+            },
+            {
+                data: 'id',
+                visible: false
+            },
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `<a href="{% url 'editar_registro' 0 %}".replace(0, row.id) class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>`;
+                }
+            }
+        ],
+        paging: true,
+        searching: true,
+        ordering: true,
+        responsive: true,
+        pageLength: 20,
+        dom: 'frtip',
+        language: {
+            processing: "Procesando...",
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            infoEmpty: "No hay registros disponibles",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            loadingRecords: "Cargando...",
+            zeroRecords: "No se encontraron resultados",
+            emptyTable: "No hay datos disponibles en la tabla",
+            paginate: {
+                first: "Primero",
+                previous: "Anterior",
+                next: "Siguiente",
+                last: "Último"
+            }
+        }
+    });
+
+    // Agregar búsqueda por columna en la segunda fila del thead
+    $('#tablaCompleta thead input').on('keyup change', function() {
+        var columnIndex = $(this).parent().index();
+        table.column(columnIndex).search(this.value).draw();
+        console.log("📝 Buscando en columna:", columnIndex, "Valor:", this.value);
+    });
+});
+
+
+    // Aplicar animaciones usando anime.js
+    document.addEventListener('DOMContentLoaded', () => {
+        anime({
+            targets: 'nav.navbar',
+            opacity: [0, 1],
+            translateY: [-20, 0],
+            duration: 800,
+            easing: 'easeOutExpo'
+        });
+
+        anime({
+            targets: '#mainContainer',
+            opacity: [0, 1],
+            duration: 800,
+            easing: 'easeOutExpo',
+            delay: 300
+        });
+
+        anime({
+            targets: '#tablaCompleta tbody tr',
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 500,
+            delay: anime.stagger(50),
+            easing: 'easeOutExpo'
+        });
+    });
+
+
+    </script>
+</body>
+</html>

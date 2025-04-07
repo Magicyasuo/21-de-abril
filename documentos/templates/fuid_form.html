@@ -1,0 +1,719 @@
+{% load custom_filters %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de FUID</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+
+        .registros-table {
+            table-layout: fixed; /* Fija la estructura de la tabla */
+            width: 100%;
+        }
+        
+        .registros-table th,
+        .registros-table td {
+            text-align: left;
+            vertical-align: middle;
+            padding: 8px;
+            font-size: 14px;
+            white-space: nowrap; /* Evita saltos de línea */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Agrega '...' si el texto es muy largo */
+        }
+        
+        .registros-table th:nth-child(2),
+        .registros-table td:nth-child(2) {
+            width: 30%; /* Unidad */
+        }
+        
+        .registros-table th:nth-child(3),
+        .registros-table td:nth-child(3) {
+            width: 20%; /* Orden */
+        }
+        
+        .registros-table th:nth-child(4),
+        .registros-table td:nth-child(4) {
+            width: 30%; /* Código */
+        }
+        
+              
+        .registros-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .registros-table {
+            table-layout: fixed; /* Fija el ancho de la tabla */
+            width: 100%;
+        }
+        
+        .registros-table th,
+        .registros-table td {
+            text-align: left;
+            vertical-align: middle;
+            padding: 6px;
+            font-size: 14px;
+            white-space: nowrap; /* Evita que el contenido se desborde */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Muestra '...' si el texto es demasiado largo */
+        }
+        
+        .registros-table td span {
+            display: block;
+            max-width: 200px; /* Ajusta según sea necesario */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        
+        .registros-table th,
+        .registros-table td {
+            text-align: left;
+            vertical-align: middle;
+            padding: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        
+        
+            /* Contenedor principal de registros */
+                .registros-container {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Distribución flexible */
+                    gap: 15px;
+                    padding: 15px;
+                    background-color: #f8f9fa;
+                    border: 1px solid #ced4da;
+                    border-radius: 8px;
+                    max-height: 300px; /* Scroll si hay muchos registros */
+                    overflow-y: auto;
+                    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+                }
+                
+                /* Cada registro como una tarjeta */
+                .registros-container .form-check {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    padding: 10px;
+                    background: white;
+                    border: 1px solid #e9ecef;
+                    border-radius: 5px;
+                    transition: all 0.3s ease-in-out;
+                    cursor: pointer;
+                }
+                
+                /* Hover para resaltar */
+                .registros-container .form-check:hover {
+                    background: #e9f5ff;
+                    box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.2);
+                }
+                
+                /* Checkbox estilizado */
+                .registros-container input[type="checkbox"] {
+                    margin-right: 10px;
+                    width: 20px;
+                    height: 20px;
+                    accent-color: #007bff; /* Estilo del checkbox */
+                }
+                
+                /* Etiquetas del registro */
+                .registros-container .form-check-label {
+                    font-size: 0.9rem;
+                    color: #495057;
+                    transition: color 0.3s ease-in-out;
+                }
+                
+                /* Estilo para el registro seleccionado */
+                input[type="checkbox"]:checked + .form-check-label {
+                    color: #007bff;
+                    font-weight: bold;
+                }
+                
+                /* Botón "Seleccionar todos" */
+                #selectAllBtn {
+                    font-size: 0.9rem;
+                    padding: 5px 12px;
+                    border-radius: 4px;
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    transition: background-color 0.3s ease-in-out;
+                }
+                
+                #selectAllBtn:hover {
+                    background-color: #0056b3;
+                }
+                
+                /* Indicador dinámico de seleccionados */
+                .total-selected {
+                    font-size: 0.85rem;
+                    padding: 0.4rem 0.6rem;
+                    border-radius: 20px;
+                    background-color: #6c757d;
+                    color: white;
+                    font-weight: bold;
+                }
+                </style>
+
+</head>
+<body>
+<main>
+
+    <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+                Hospital del Sarare
+            </a>
+            <span class="navbar-text">
+                {% if request.user.is_authenticated %}
+                    Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+
+        
+
+<div id="user-data"
+    data-oficina="{{ request.user.perfil.oficina.id }}"
+    data-unidad="{{ request.user.perfil.oficina.unidad_administrativa.id }}"
+    data-entidad="{{ request.user.perfil.oficina.unidad_administrativa.entidad_productora.id }}">
+  </div>
+  
+
+    <div class="container animate__animated animate__fadeInUp" id="mainContent">
+        <div class="mb-4">
+            <h1 class="mb-4">{{ view.action|default:"Crear" }} FUID</h1>
+
+            
+
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Datos del FUID</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.errors }}
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.entidad_productora.id_for_label }}" class="form-label fw-semibold">Entidad Productora</label>
+                                {{ form.entidad_productora|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.unidad_administrativa.id_for_label }}" class="form-label fw-semibold">Unidad Administrativa</label>
+                                {{ form.unidad_administrativa|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.oficina_productora.id_for_label }}" class="form-label fw-semibold">Oficina Productora</label>
+                                {{ form.oficina_productora|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.objeto.id_for_label }}" class="form-label fw-semibold">Objeto</label>
+                                {{ form.objeto|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary">Elaborado Por</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.elaborado_por_nombre.id_for_label }}" class="form-label fw-semibold">Nombre</label>
+                                {{ form.elaborado_por_nombre|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.elaborado_por_cargo.id_for_label }}" class="form-label fw-semibold">Cargo</label>
+                                {{ form.elaborado_por_cargo|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.elaborado_por_lugar.id_for_label }}" class="form-label fw-semibold">Lugar</label>
+                                {{ form.elaborado_por_lugar|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.elaborado_por_fecha.id_for_label }}" class="form-label fw-semibold">Fecha</label>
+                                {{ form.elaborado_por_fecha|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary">Entregado Por</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.entregado_por_nombre.id_for_label }}" class="form-label fw-semibold">Nombre</label>
+                                {{ form.entregado_por_nombre|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.entregado_por_cargo.id_for_label }}" class="form-label fw-semibold">Cargo</label>
+                                {{ form.entregado_por_cargo|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.entregado_por_lugar.id_for_label }}" class="form-label fw-semibold">Lugar</label>
+                                {{ form.entregado_por_lugar|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.entregado_por_fecha.id_for_label }}" class="form-label fw-semibold">Fecha</label>
+                                {{ form.entregado_por_fecha|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary">Recibido Por</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.recibido_por_nombre.id_for_label }}" class="form-label fw-semibold">Nombre</label>
+                                {{ form.recibido_por_nombre|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.recibido_por_cargo.id_for_label }}" class="form-label fw-semibold">Cargo</label>
+                                {{ form.recibido_por_cargo|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.recibido_por_lugar.id_for_label }}" class="form-label fw-semibold">Lugar</label>
+                                {{ form.recibido_por_lugar|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.recibido_por_fecha.id_for_label }}" class="form-label fw-semibold">Fecha</label>
+                                {{ form.recibido_por_fecha|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <!-- registros asociados -->
+                                        <!-- Botón para abrir la sección de registros -->
+                                        <button class="btn btn-primary w-100 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#registros-section">
+                                            📂 Mostrar/Ocultar Registros (solo disponible en edición)
+                                        </button>
+
+                                        <div id="registros-section" class="collapse">
+                                            <!-- Filtros -->
+
+    <!-- Registros Asociados -->
+    <button class="btn btn-success w-100 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#registros-asociados-section">
+        ✅ Mostrar/Ocultar Registros Asociados
+    </button>
+
+    <!-- Controles de paginación y búsqueda para Registros Asociados -->
+<!-- Controles de paginación y búsqueda para Registros Asociados -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <button id="prevAsociados" class="btn btn-outline-primary btn-sm">⬅ Anterior</button>
+    <span id="infoAsociados">Página X de Y</span>
+    <button id="nextAsociados" class="btn btn-outline-primary btn-sm">Siguiente ➡</button>
+</div>
+<input type="text" id="searchAsociados" class="form-control form-control-sm" placeholder="Buscar en Registros Asociados">
+<button id="selectAllAsociados" class="btn btn-sm btn-success mt-2">Seleccionar Todos</button>
+
+
+    <div id="registros-asociados-section" class="collapse show">
+        <h5 class="mt-4 mb-3 text-primary">Registros Asociados</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 5%;">✔</th>
+                        <th>Unidad</th>
+                        <th>Orden</th>
+                        <th>Código</th>
+                    </tr>
+                </thead>
+                <tbody id="registros-asociados">
+                    {% for registro in form.fields.registros.queryset %}
+                    {% if registro.id in registros_asociados %}
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" name="registros" value="{{ registro.id }}" class="form-check-input registro-checkbox" checked>
+                        </td>
+                        <td>{{ registro.unidad_documental }}</td>
+                        <td>{{ registro.numero_orden }}</td>
+                        <td>{{ registro.codigo }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Registros Disponibles -->
+    <button class="btn btn-warning w-100 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#registros-disponibles-section">
+        📄 Mostrar/Ocultar Registros Disponibles
+    </button>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <button id="prevDisponibles" class="btn btn-outline-primary btn-sm">⬅ Anterior</button>
+        <span id="infoDisponibles">Página X de Y</span>
+        <button id="nextDisponibles" class="btn btn-outline-primary btn-sm">Siguiente ➡</button>
+    </div>
+    <input type="text" id="searchDisponibles" class="form-control form-control-sm" placeholder="Buscar en Registros Disponibles">
+    <button id="selectAllDisponibles" class="btn btn-sm btn-warning mt-2">Seleccionar Todos</button>
+    
+    <div id="registros-disponibles-section" class="collapse show">
+        <h5 class="mt-4 mb-3 text-primary">Registros Disponibles</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 5%;">✔</th>
+                        <th>Unidad</th>
+                        <th>Orden</th>
+                        <th>Código</th>
+                    </tr>
+                </thead>
+                <tbody id="registros-disponibles">
+                    {% for registro in form.fields.registros.queryset %}
+                    {% if registro.id not in registros_asociados %}
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" name="registros" value="{{ registro.id }}" class="form-check-input registro-checkbox">
+                        </td>
+                        <td>{{ registro.unidad_documental }}</td>
+                        <td>{{ registro.numero_orden }}</td>
+                        <td>{{ registro.codigo }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <a href="{% url 'fuid_list' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+        <footer class="animate__animated animate__fadeInUp">
+            <p>© {{ current_year }} Hospital del Sarare - Central de Archivos del Sarare. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <!-- javascript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          console.log("DOM cargado, iniciando script de paginación...");
+        
+          // =====================================================================
+          // 1) REFERENCIAS A LOS ELEMENTOS DE LA PÁGINA
+          // =====================================================================
+          const registrosAsociados   = document.getElementById('registros-asociados');
+          const registrosDisponibles = document.getElementById('registros-disponibles');
+        
+          const btnSelectAllAsociados   = document.getElementById('selectAllAsociados');
+          const btnSelectAllDisponibles = document.getElementById('selectAllDisponibles');
+        
+          const searchAsociados   = document.getElementById('searchAsociados');
+          const searchDisponibles = document.getElementById('searchDisponibles');
+        
+          const prevAsociados     = document.getElementById('prevAsociados');
+          const nextAsociados     = document.getElementById('nextAsociados');
+          const prevDisponibles   = document.getElementById('prevDisponibles');
+          const nextDisponibles   = document.getElementById('nextDisponibles');
+        
+          const infoAsociados     = document.getElementById('infoAsociados');
+          const infoDisponibles   = document.getElementById('infoDisponibles');
+        
+          // Form principal (para inyectar inputs ocultos y enviar los registros asociados)
+          const form = document.querySelector('form');
+        
+          // =====================================================================
+          // 2) CONFIGURACIÓN DE PAGINACIÓN Y ESTADOS
+          // =====================================================================
+          const pageSize = 50;  // Mostramos 50 registros por página
+        
+          let currentPageAsociados   = 1; // Página actual para 'Registros Asociados'
+          let currentPageDisponibles = 1; // Página actual para 'Registros Disponibles'
+        
+          // 🔑 Arrays en memoria: todas las filas (TR) para cada tabla
+          let allRowsAsociados = [];
+          let allRowsDisponibles = [];
+        
+          // =====================================================================
+          // 3) FUNCIÓN PARA INICIALIZAR LAS FILAS EN MEMORIA
+          // =====================================================================
+          function initAllRows() {
+            // Tomamos todas las filas del DOM y las guardamos en arrays
+            allRowsAsociados   = Array.from(registrosAsociados.querySelectorAll('tr'));
+            allRowsDisponibles = Array.from(registrosDisponibles.querySelectorAll('tr'));
+        
+            // Ocultamos todas las filas (las mostraremos según la paginación)
+            allRowsAsociados.forEach(row => row.style.display = 'none');
+            allRowsDisponibles.forEach(row => row.style.display = 'none');
+          }
+        
+          // =====================================================================
+          // 4) FUNCIÓN PARA RENDERIZAR TABLA (PAGINAR)
+          // =====================================================================
+          // Recibe un array con TODAS las filas, y muestra sólo las de la página actual
+          function renderTable(allRows, currentPage, infoLabel) {
+            const totalRows = allRows.length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+        
+            if (currentPage > totalPages) {
+              currentPage = totalPages || 1;
+            }
+        
+            // Ocultar TODAS las filas
+            allRows.forEach(row => {
+              row.style.display = 'none';
+            });
+        
+            // Calcular el rango de filas a mostrar
+            const start = (currentPage - 1) * pageSize;
+            const end   = start + pageSize;
+        
+            // Mostrar solo las filas de la página actual
+            const rowsToShow = allRows.slice(start, end);
+            rowsToShow.forEach(row => {
+              row.style.display = '';
+            });
+        
+            // Actualizar la etiqueta de paginación
+            if (infoLabel) {
+              infoLabel.innerText = `Página ${currentPage}/${totalPages} - Mostrando ${Math.min(pageSize, totalRows - start)} de ${totalRows}`;
+            }
+        
+            return currentPage;
+          }
+        
+          // =====================================================================
+          // 5) FILTRAR POR ENTER
+          // =====================================================================
+          // Filtra el array en memoria según el texto, luego repagina
+          function filterTableOnEnter(event, allRows, searchInput, currentPage, infoLabel, isAsociados) {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              const filterValue = searchInput.value.toLowerCase();
+        
+              // Filtramos en un nuevo array
+              let filtered = allRows.filter(row => {
+                const rowText = row.innerText.toLowerCase();
+                return rowText.includes(filterValue);
+              });
+        
+              // Ocultamos todas las filas del array original
+              allRows.forEach(row => { row.style.display = 'none'; });
+        
+              // Mostramos las del array filtrado
+              filtered.forEach(row => { row.style.display = ''; });
+        
+              // Repaginar
+              currentPage = 1;  // Volvemos a la página 1
+              const totalFiltered = filtered.length;
+              const totalPages = Math.ceil(totalFiltered / pageSize);
+        
+              if (totalPages === 0) {
+                if (infoLabel) {
+                  infoLabel.innerText = `Página 0/0 - Mostrando 0 de 0`;
+                }
+                return;
+              }
+        
+              // Ocultar todo
+              filtered.forEach(row => row.style.display = 'none');
+              let start = 0;
+              let end   = pageSize;
+              let rowsToShow = filtered.slice(start, end);
+              rowsToShow.forEach(row => row.style.display = '');
+        
+              if (infoLabel) {
+                infoLabel.innerText = `Página ${currentPage}/${totalPages} - Mostrando ${Math.min(pageSize, totalFiltered)} de ${totalFiltered}`;
+              }
+        
+              // Guardamos la actual pagina en la variable global
+              if (isAsociados) {
+                currentPageAsociados = currentPage;
+              } else {
+                currentPageDisponibles = currentPage;
+              }
+            }
+          }
+        
+          // =====================================================================
+          // 6) FUNCIÓN PARA MOVER UNA FILA DE UNA TABLA A OTRA
+          // =====================================================================
+          function moveRow(checkbox, fromTable, toTable) {
+            const row = checkbox.closest("tr");
+        
+            // 1. Remover la fila de su array origen
+            if (fromTable === registrosAsociados) {
+              allRowsAsociados = allRowsAsociados.filter(r => r !== row);
+            } else {
+              allRowsDisponibles = allRowsDisponibles.filter(r => r !== row);
+            }
+        
+            // 2. Agregar la fila al array destino
+            if (toTable === registrosAsociados) {
+              allRowsAsociados.push(row);
+            } else {
+              allRowsDisponibles.push(row);
+            }
+        
+            // 3. Mover en el DOM
+            row.parentNode.removeChild(row);
+            toTable.appendChild(row);
+        
+            // 4. Reelegir la paginación
+            if (fromTable === registrosAsociados || toTable === registrosAsociados) {
+              currentPageAsociados = renderTable(allRowsAsociados, currentPageAsociados, infoAsociados);
+            }
+            if (fromTable === registrosDisponibles || toTable === registrosDisponibles) {
+              currentPageDisponibles = renderTable(allRowsDisponibles, currentPageDisponibles, infoDisponibles);
+            }
+          }
+        
+          // =====================================================================
+          // 7) ESCUCHAR EL CAMBIO DEL CHECKBOX
+          // =====================================================================
+          function attachCheckboxListener(checkbox) {
+            checkbox.addEventListener('change', () => {
+              if (checkbox.checked) {
+                moveRow(checkbox, registrosDisponibles, registrosAsociados);
+              } else {
+                moveRow(checkbox, registrosAsociados, registrosDisponibles);
+              }
+            });
+          }
+        
+          // =====================================================================
+          // 8) "SELECCIONAR TODOS" (marca y mueve)
+          // =====================================================================
+          function toggleSelectAll(fromTable, toTable, arrayOrigen, arrayDestino, currentPageOrigen, infoLabelOrigen) {
+            // Paginación: mostrar todas las filas del array original
+            arrayOrigen.forEach(row => row.style.display = ''); // mostrar todo para poder "seleccionarlo"
+        
+            // Haz "checked=true" y muévelas
+            arrayOrigen.forEach(row => {
+              const checkbox = row.querySelector('.registro-checkbox');
+              if (checkbox && !checkbox.checked) {
+                checkbox.checked = true;
+              }
+              // Mueve la fila (aunque ya se revise en attachCheckbox, preferimos mover manualmente)
+              moveRow(checkbox, fromTable, toTable);
+            });
+        
+            // Re-paginar la tabla origen (que ahora debería quedar vacía o parcial)
+            currentPageOrigen = renderTable(arrayOrigen, currentPageOrigen, infoLabelOrigen);
+          }
+        
+          // =====================================================================
+          // 9) INICIALIZACIÓN
+          // =====================================================================
+          // A) Asignar listener a cada checkbox
+          document.querySelectorAll('.registro-checkbox').forEach(attachCheckboxListener);
+        
+          // B) Cargar TODAS las filas en arrays, e inicializar la paginación
+          initAllRows();
+        
+          currentPageAsociados = renderTable(allRowsAsociados, currentPageAsociados, infoAsociados);
+          currentPageDisponibles = renderTable(allRowsDisponibles, currentPageDisponibles, infoDisponibles);
+        
+          // =====================================================================
+          // 10) EVENTOS DE FILTRO (ENTER)
+          // =====================================================================
+          searchAsociados.addEventListener('keydown', (event) => {
+            filterTableOnEnter(event, allRowsAsociados, searchAsociados, currentPageAsociados, infoAsociados, true);
+          });
+          searchDisponibles.addEventListener('keydown', (event) => {
+            filterTableOnEnter(event, allRowsDisponibles, searchDisponibles, currentPageDisponibles, infoDisponibles, false);
+          });
+        
+          // =====================================================================
+          // 11) BOTONES: "SELECCIONAR TODOS"
+          // =====================================================================
+          btnSelectAllAsociados.addEventListener('click', (event) => {
+            event.preventDefault();
+            toggleSelectAll(registrosDisponibles, registrosAsociados, allRowsDisponibles, allRowsAsociados, currentPageDisponibles, infoDisponibles);
+          });
+        
+          btnSelectAllDisponibles.addEventListener('click', (event) => {
+            event.preventDefault();
+            toggleSelectAll(registrosAsociados, registrosDisponibles, allRowsAsociados, allRowsDisponibles, currentPageAsociados, infoAsociados);
+          });
+        
+          // =====================================================================
+          // 12) EVENTOS DE PAGINACIÓN
+          // =====================================================================
+          prevAsociados.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (currentPageAsociados > 1) {
+              currentPageAsociados--;
+              currentPageAsociados = renderTable(allRowsAsociados, currentPageAsociados, infoAsociados);
+            }
+          });
+        
+          nextAsociados.addEventListener('click', (event) => {
+            event.preventDefault();
+            currentPageAsociados++;
+            currentPageAsociados = renderTable(allRowsAsociados, currentPageAsociados, infoAsociados);
+          });
+        
+          prevDisponibles.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (currentPageDisponibles > 1) {
+              currentPageDisponibles--;
+              currentPageDisponibles = renderTable(allRowsDisponibles, currentPageDisponibles, infoDisponibles);
+            }
+          });
+        
+          nextDisponibles.addEventListener('click', (event) => {
+            event.preventDefault();
+            currentPageDisponibles++;
+            currentPageDisponibles = renderTable(allRowsDisponibles, currentPageDisponibles, infoDisponibles);
+          });
+        
+          // =====================================================================
+          // 13) AL ENVIAR EL FORM, CREAR INPUTS OCULTOS CON LOS REGISTROS ASOCIADOS
+          // =====================================================================
+          form.addEventListener('submit', () => {
+            const inputContainer = document.createElement('div');
+            inputContainer.style.display = 'none';
+        
+            // Solo los checkboxes marcados en "Registros Asociados"
+            allRowsAsociados.forEach(row => {
+              const checkbox = row.querySelector('.registro-checkbox');
+              if (checkbox && checkbox.checked) {
+                const input = document.createElement('input');
+                input.type  = 'hidden';
+                input.name  = 'registros'; // Django lo manejará como un array
+                input.value = checkbox.value;
+                inputContainer.appendChild(input);
+              }
+            });
+        
+            form.appendChild(inputContainer);
+            console.log("Datos preparados para envío en el formulario principal.");
+          });
+        });
+        </script>
+        
+        

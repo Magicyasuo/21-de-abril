@@ -1,0 +1,139 @@
+{% load custom_filters %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de FUID</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<style>body {
+    overflow-x: hidden; /* Evita el scroll horizontal */
+}
+
+.container-fluid {
+    max-width: 90vw; /* Hace que el contenedor use casi toda la pantalla */
+}
+
+table {
+    width: 100% !important; /* Hace que la tabla se expanda */
+    table-layout: fixed; /* Hace que las columnas se ajusten automáticamente */
+}
+
+th, td {
+    word-wrap: break-word; /* Evita que el texto largo provoque desbordamientos */
+    white-space: normal;
+}
+</style>
+
+</head>
+<body>
+<main>
+    <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+                Hospital del Sarare
+            </a>
+            <span class="navbar-text">
+                {% if request.user.is_authenticated %}
+                    Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+
+    <div class="container-fluid animate__animated animate__fadeInUp" id="mainContainer">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="animate__animated animate__fadeInDown">Lista de FUID</h1>
+            <a href="{% url 'crear_fuid' %}" class="btn btn-primary animate__animated animate__fadeInDown animate__delay-1s">
+                <i class="bi bi-folder-plus"></i> Crear FUID
+            </a>
+        </div>
+    
+        <table class="table table-striped table-bordered w-100 animate__animated animate__fadeInUp animate__delay-1s" id="fuidTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Unidad Administrativa</th>
+                    <th>Oficina Productora</th>
+                    <th>Objeto</th>
+                    <th>Fecha de Creación</th>
+                    <th>Creado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fuid in fuids %}
+                <tr>
+                    <td>{{ fuid.id }}</td>
+                    <td>{{ fuid.unidad_administrativa }}</td>
+                    <td>{{ fuid.oficina_productora }}</td>
+                    <td>{{ fuid.objeto }}</td>
+                    <td>{{ fuid.fecha_creacion|date:"Y-m-d" }}</td>
+                    <td>{{ fuid.creado_por }}</td>
+                    <td>
+                        <a href="{% url 'editar_fuid' fuid.id %}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Editar</a>
+                        <a href="{% url 'detalle_fuid' fuid.id %}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Ver</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No hay FUIDs registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+</main>
+<footer>
+    <p>&copy; {{ current_year }} Hospital del Sarare - Central de Archivos del Sarare.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Animar el contenedor principal con Anime.js
+        anime({
+            targets: '#mainContainer',
+            opacity: [0,1],
+            duration: 800,
+            easing: 'easeOutExpo'
+        });
+
+        // Animar las filas de la tabla
+        anime({
+            targets: '#fuidTable tbody tr',
+            opacity: [0,1],
+            translateY: [20,0],
+            duration: 500,
+            delay: anime.stagger(100),
+            easing: 'easeOutExpo'
+        });
+
+        // Animar el navbar
+        anime({
+            targets: 'nav.navbar',
+            opacity: [0,1],
+            duration: 500,
+            easing: 'easeOutExpo'
+        });
+    });
+</script>
+</body>
+</html>
+
+<!-- python manage.py makemigrations
+python manage.py migrate -->

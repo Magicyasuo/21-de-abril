@@ -1,0 +1,6 @@
+<!-- templates/partials/_form_registro.html -->
+<form method="POST" id="formRegistro">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="fuid" value="{{ fuid.id }}">
+</form>

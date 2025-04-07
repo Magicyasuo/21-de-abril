@@ -1,0 +1,230 @@
+/* Fuente global */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background: linear-gradient(135deg, #f4f6f8, #e9edf1); /* Fondo limpio y profesional */
+    color: #333; /* Texto en gris oscuro para legibilidad */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Barra de navegación */
+.navbar {
+    background-color: #f8f9fa; /* Cremita */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+.navbar-brand, .navbar-nav .nav-link, .navbar-text a {
+    color: #003366 !important; /* Azul oscuro */
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+.navbar-nav .nav-link:hover {
+    color: #0056b3 !important; /* Azul más vibrante */
+}
+.nav-animado, #mainContainer {
+    opacity: 0; /* Para animaciones con Anime.js */
+}
+
+.hidden {
+    display: none;
+}
+
+/* Hero Section */
+.hero {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+.hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #003366;
+}
+.hero p {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Tarjetas estadísticas */
+.stats-card {
+    border: none;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    text-align: center;
+    opacity: 0; /* Para animación con Anime.js */
+}
+.stats-card i {
+    font-size: 2rem;
+    color: #0056b3; /* Azul vibrante */
+    margin-bottom: 0.5rem;
+}
+.stats-card h5 {
+    font-weight: 600;
+    color: #003366;
+}
+.stats-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+/* Títulos de secciones */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #003366;
+    margin-bottom: 1rem;
+}
+
+/* Quick Links */
+.quick-links .card {
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    padding: 1rem;
+    transition: transform 0.1s ease;
+    opacity: 0; /* Para animación con Anime.js */
+}
+.quick-links .card:hover {
+    transform: scale(1.02);
+}
+.quick-links i {
+    font-size: 2rem;
+    color: #0056b3; /* Azul vibrante */
+    margin-bottom: 0.5rem;
+}
+.quick-links h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #003366;
+    margin-bottom: 0.5rem;
+}
+
+html, body {
+    height: 100%; /* Asegura que el HTML y el body ocupen toda la pantalla */
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Configura el flujo de elementos en columna */
+}
+
+ main {
+    flex: 1; /* Hace que el contenido principal ocupe todo el espacio disponible */
+} 
+
+footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    background: #003366;
+    color: #ffffff;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+
+/* Botón de inicio de sesión */
+.login-btn {
+    background: #0069d9;
+    color: #ffffff;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.login-btn:hover {
+    background: #005bb5;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tablas */
+.table {
+    border-collapse: collapse;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    width: 80%;
+    table-layout: auto;
+}
+.table th, .table td {
+    font-size: 0.9rem;
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+.table-striped tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Inputs en filtros */
+thead input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 0.75rem;
+    padding: 2px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Ajustes DataTables */
+.dataTables_wrapper .dataTables_filter {
+    float: left !important;
+    text-align: left;
+}
+.dataTables_wrapper .dataTables_paginate {
+    float: left !important;
+}
+
+/* Botones */
+.btn-primary {
+    background-color: #0069d9 !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-primary:hover {
+    background-color: #005bb5 !important;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+.btn-warning {
+    background-color: #ffc107 !important;
+    color: #212529;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-warning:hover {
+    background-color: #e0a800 !important;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+.btn-info {
+    background-color: #17a2b8 !important;
+    border: none;
+    color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-info:hover {
+    background-color: #138496 !important;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Media Queries */
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+}

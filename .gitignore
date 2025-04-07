@@ -1,0 +1,18 @@
+# Ignora entornos virtuales
+env/
+venv/
+
+# Ignora archivos compilados
+__pycache__/
+*.pyc
+
+# Ignora archivos de configuración
+.env
+db.sqlite3
+
+# Ignora archivos estáticos generados
+# staticfiles/
+# node_modules/
+
+# Ignora migraciones
+*/migrations/

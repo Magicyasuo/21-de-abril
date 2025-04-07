@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Documentos del Registro</title>
+  <!-- Bootstrap (opcional, puedes usar tu propio CSS si prefieres) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <!-- Iconos de Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <style>
+    /* Fondo general */
+    body {
+      background: linear-gradient(135deg, #f4f6f8, #e9edf1);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAV (barra de navegación) */
+    nav.navbar {
+      background-color: #003366;
+    }
+    nav a.navbar-brand,
+nav .nav-link,
+nav .navbar-text {
+  color: #000 !important;
+}
+
+    nav a.navbar-brand:hover {
+      color: #ccc !important;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #003366, #0056b3);
+      padding: 60px 0;
+      text-align: center;
+      color: #fff;
+    }
+    .hero .lead {
+      color: #ff4500;
+    }
+
+    /* Contenido principal */
+    .content-container {
+      flex: 1;
+      padding: 2rem 0;
+    }
+
+    /* Tabla */
+    .table-striped > tbody > tr:nth-of-type(odd) {
+      background-color: #f9fafb;
+    }
+    .btn-success {
+      background-color: #28a745;
+      border: none;
+    }
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    /* Footer */
+    footer {
+      background: #003366;
+      color: #ffffff;
+      text-align: center;
+      padding: 1rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Navegación -->
+  <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+            Hospital del Sarare
+        </a>
+        <span class="navbar-text">
+            {% if request.user.is_authenticated %}
+                Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+        </span>
+    </div>
+</nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="display-5 fw-bold">📁 Documentos del Registro #{{ registro.numero_orden }}</h1>
+      <p class="lead">Descarga los archivos asociados</p>
+    </div>
+  </section>
+
+  <!-- Botón "Volver al FUID" (opcional; si no lo usas, quítalo) -->
+  {% if fuid %}
+    <div class="container mt-3">
+      <a href="{% url 'detalle_fuid' fuid.id %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al FUID
+      </a>
+    </div>
+  {% endif %}
+
+  <!-- Contenedor principal -->
+  <div class="container content-container">
+    {% if documentos %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Nombre de Archivo</th>
+              <th>Fecha de Subida</th>
+              <th class="text-center">Descargar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for documento in documentos %}
+              <tr>
+                <td>{{ documento.archivo.name|cut:"documentos/" }}</td>
+                <td>{{ documento.uploaded_at|date:"d M Y, H:i" }}</td>
+                <td class="text-center">
+                  <a href="{{ documento.archivo.url }}" download class="btn btn-success">
+                    <i class="bi bi-download"></i> Descargar
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="alert alert-warning text-center mt-4">
+        <i class="bi bi-exclamation-circle-fill text-danger fs-3"></i>
+        <h4 class="mt-2">No hay documentos disponibles</h4>
+        <p class="text-muted">Este registro no tiene archivos asociados.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; {{ current_year }} Hospital del Sarare - Central de Archivos.
+  </footer>
+
+  <!-- Bootstrap JS (opcional) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

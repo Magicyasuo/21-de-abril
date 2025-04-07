@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Editar registro del FUID{% endblock %}
+
+{% block content %}
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .documentos-container {
+    padding: 15px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: auto;
+}
+
+.documentos-container h5 {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.documentos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.documento-card {
+    width: 140px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 14px;
+}
+
+.documento-card .icono {
+    font-size: 30px;
+    margin-bottom: 5px;
+}
+
+.documento-card .info a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #007bff;
+    display: block;
+}
+
+.documento-card .info p {
+    font-size: 12px;
+    color: #666;
+}
+
+</style>
+
+
+<a href="{% url 'detalle_fuid' fuid.id %}" class="btn btn-secondary mb-3">
+    <i class="bi bi-arrow-left"></i> Volver al FUID
+</a>
+
+{% if messages %}
+<div>
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container py-4">
+    <h1>Editar registro del FUID #{{ fuid.id }}</h1>
+    <!-- 🔸 Formulario con enctype para manejar archivos -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.errors }}
+
+        <!-- Campo Número de Orden -->
+        <div class="mb-3">
+            <label for="{{ form.numero_orden.id_for_label }}" class="form-label">Número de Orden</label>
+            {{ form.numero_orden|add_class:"form-control" }}
+        </div>
+
+        <!-- Campo Código -->
+                <div class="mb-3">
+                    <label for="{{ form.codigo.id_for_label }}" class="form-label">Código</label>
+                    {{ form.codigo|add_class:"form-control" }}
+                </div>
+
+        <!-- Campo Serie -->
+        <div class="mb-3">
+            <label for="{{ form.codigo_serie.id_for_label }}" class="form-label">Serie</label>
+            {{ form.codigo_serie|add_class:"form-select" }}
+        </div>
+
+        <!-- Campo Subserie -->
+        <div class="mb-3">
+            <label for="{{ form.codigo_subserie.id_for_label }}" class="form-label">Subserie</label>
+            <select id="{{ form.codigo_subserie.id_for_label }}" class="form-select" name="{{ form.codigo_subserie.html_name }}">
+                <option value="">Seleccione una subserie</option>
+            </select>
+        </div>
+
+        <!-- Campo Unidad Documental -->
+        <div class="mb-3">
+            <label for="{{ form.unidad_documental.id_for_label }}" class="form-label">Unidad Documental</label>
+            {{ form.unidad_documental|add_class:"form-control" }}
+        </div>
+
+        <!-- Campo Fecha Inicial -->
+        <div class="mb-3">
+            <label for="{{ form.fecha_inicial.id_for_label }}" class="form-label">Fecha Inicial</label>
+            {{ form.fecha_inicial|add_class:"form-control" }}
+        </div>
+
+        <!-- Campo Fecha Final -->
+        <div class="mb-3">
+            <label for="{{ form.fecha_final.id_for_label }}" class="form-label">Fecha Final</label>
+            {{ form.fecha_final|add_class:"form-control" }}
+        </div>
+
+        <!-- Checkboxes de Soporte -->
+        <div class="form-check form-switch mb-3">
+            {{ form.soporte_fisico }}
+            <label class="form-check-label" for="{{ form.soporte_fisico.id_for_label }}">Soporte Físico</label>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            {{ form.soporte_electronico }}
+            <label class="form-check-label" for="{{ form.soporte_electronico.id_for_label }}">Soporte Electrónico</label>
+        </div>
+
+        <!-- Campos relacionados con Soporte Físico -->
+        <div id="soporteFisicoFields" class="border p-3 mb-3 hidden">
+            <h5 class="mb-3">Datos de Soporte Físico</h5>
+            <div class="mb-3">
+                <label for="{{ form.caja.id_for_label }}" class="form-label">Caja</label>
+                {{ form.caja|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.carpeta.id_for_label }}" class="form-label">Carpeta</label>
+                {{ form.carpeta|add_class:"form-control" }}
+            </div>
+<!-- cajas de seleccion para tomo, legajo y libro -->
+            <div class="mb-3">
+                <label for="tomo_legajo_libro" class="form-label">Tomo/Legajo/Libro</label>
+                <select id="tomo_legajo_libro" class="form-select">
+                    <option value="">Seleccione una opción</option>
+                    <option value="Tomo">Tomo</option>
+                    <option value="Legajo">Legajo</option>
+                    <option value="Libro">Libro</option>
+                </select>
+                <input type="hidden" id="hidden_tomo_legajo_libro" name="{{ form.tomo_legajo_libro.html_name }}" value="{{ form.tomo_legajo_libro.value }}">
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.numero_folios.id_for_label }}" class="form-label">Número de Folios</label>
+                {{ form.numero_folios|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.tipo.id_for_label }}" class="form-label">Tipo</label>
+                {{ form.tipo|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.cantidad.id_for_label }}" class="form-label">Cantidad</label>
+                {{ form.cantidad|add_class:"form-control" }}
+            </div>
+        </div>
+
+        <!-- Campos relacionados con Soporte Electrónico -->
+        <div id="soporteElectronicoFields" class="border p-3 mb-3 hidden">
+            <h5 class="mb-3">Datos de Soporte Electrónico</h5>
+            <div class="mb-3">
+                <label for="{{ form.ubicacion.id_for_label }}" class="form-label">Ubicación</label>
+                {{ form.ubicacion|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.cantidad_documentos_electronicos.id_for_label }}" class="form-label">Cantidad de Documentos Electrónicos</label>
+                {{ form.cantidad_documentos_electronicos|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.tamano_documentos_electronicos.id_for_label }}" class="form-label">Tamaño de los Documentos Electrónicos</label>
+                {{ form.tamano_documentos_electronicos|add_class:"form-control" }}
+            </div>
+
+                    <!-- Campo para subir archivo nuevo -->
+        <div class="mb-3">
+            <label for="{{ form.archivo.id_for_label }}" class="form-label">Adjuntar Documento</label>
+            {{ form.archivo|add_class:"form-control" }}
+            <small class="form-text text-muted">El archivo no debe superar 10 MB.</small>
+        </div>
+        </div>
+
+        <!-- Estado del archivo -->
+        <div class="mb-3 form-check">
+            {{ form.Estado_archivo }}
+            <label class="form-check-label" for="{{ form.Estado_archivo.id_for_label }}">Registro vigente</label>
+        </div>
+
+
+        <!-- Mostrar Documentos adjuntos (si existen) -->
+        {% if registro.documentos.all %}
+        <div class="documentos-container">
+            <h5>📂 Documentos Adjuntos ({{ registro.documentos.count }})</h5>
+            <div class="documentos-grid">
+                {% for doc in registro.documentos.all %}
+                    <div class="documento-card">
+                        <div class="icono">
+                            {% if doc.archivo.url|lower|slice:"-4:" == ".pdf" %}
+                                📄
+                            {% elif doc.archivo.url|lower|slice:"-4:" == ".doc" or doc.archivo.url|lower|slice:"-5:" == ".docx" %}
+                                📝
+                            {% elif doc.archivo.url|lower|slice:"-4:" == ".xls" or doc.archivo.url|lower|slice:"-5:" == ".xlsx" %}
+                                📊
+                            {% elif doc.archivo.url|lower|slice:"-4:" == ".png" or doc.archivo.url|lower|slice:"-4:" == ".jpg" or doc.archivo.url|lower|slice:"-5:" == ".jpeg" %}
+                                🖼️
+                            {% else %}
+                                📁
+                            {% endif %}
+                        </div>
+                        <div class="info">
+                            <!-- <a href="{{ doc.archivo.url }}" target="_blank">{{ doc.archivo.name|slice:"10" }}</a> -->
+                            <p>📅 {{ doc.uploaded_at|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    
+
+        <!-- Botón de envío -->
+        <button type="submit" class="btn btn-primary">Guardar Registro</button>
+    </form>
+</div>
+
+<!-- Scripts de comportamiento -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Soportes
+    const soporteFisicoCheckbox = document.getElementById('{{ form.soporte_fisico.id_for_label }}');
+    const soporteElectronicoCheckbox = document.getElementById('{{ form.soporte_electronico.id_for_label }}');
+    const soporteFisicoFields = document.getElementById('soporteFisicoFields');
+    const soporteElectronicoFields = document.getElementById('soporteElectronicoFields');
+
+    function toggleFields() {
+        soporteFisicoFields.classList.toggle('hidden', !soporteFisicoCheckbox.checked);
+        soporteElectronicoFields.classList.toggle('hidden', !soporteElectronicoCheckbox.checked);
+    }
+    toggleFields();
+    soporteFisicoCheckbox.addEventListener('change', toggleFields);
+    soporteElectronicoCheckbox.addEventListener('change', toggleFields);
+
+    // Manejo de series y subseries
+    const serieSelect = document.getElementById('{{ form.codigo_serie.id_for_label }}');
+    const subserieSelect = document.getElementById('{{ form.codigo_subserie.id_for_label }}');
+
+    // ID de la subserie actual (para marcar la opción cuando se cargue)
+    const currentSubserieId = "{{ registro.codigo_subserie_id|default:'' }}";
+
+    function cargarSubseries(serieId) {
+        fetch("{% url 'cargar_subseries' %}?serie_id=" + serieId)
+            .then(response => response.json())
+            .then(data => {
+                subserieSelect.innerHTML = '<option value="">Seleccione una subserie</option>';
+                data.forEach(subserie => {
+                    const option = document.createElement('option');
+                    option.value = subserie.id;
+                    option.textContent = subserie.nombre;
+                    subserieSelect.appendChild(option);
+
+                    // Si coincide con la subserie actual, marcarla
+                    if (subserie.id == currentSubserieId) {
+                        option.selected = true;
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error cargando subseries:', error);
+            });
+    }
+
+    if (serieSelect.value) {
+        cargarSubseries(serieSelect.value);
+    }
+
+    serieSelect.addEventListener('change', function() {
+        const serieId = this.value;
+        if (serieId) {
+            cargarSubseries(serieId);
+        } else {
+            subserieSelect.innerHTML = '<option value="">Seleccione una subserie</option>';
+        }
+    });
+});
+</script>
+
+<!-- cajas de seleccion -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectField = document.getElementById('tomo_legajo_libro');
+        const hiddenField = document.getElementById('hidden_tomo_legajo_libro');
+    
+        // Cuando el usuario selecciona una opción, actualiza el campo oculto
+        selectField.addEventListener('change', function () {
+            hiddenField.value = selectField.value;
+        });
+    });
+    </script>
+    
+
+{% endblock %}

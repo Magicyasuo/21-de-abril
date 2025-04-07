@@ -1,0 +1,39 @@
+<!-- {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Agregar Registro al FUID{% endblock %}
+
+{% block content %}
+<a href="{% url 'detalle_fuid' fuid.id %}" class="btn btn-secondary mb-3">
+    <i class="bi bi-arrow-left"></i> Volver al FUID
+</a>
+
+{% if messages %}
+<div>
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container py-4">
+    <h1>Agregar Registro al FUID #{{ fuid.id }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.errors }}
+
+        <!-- Campos similares a los de tu registro_form.html -->
+        <!-- <div class="mb-3">
+            <label for="{{ form.numero_orden.id_for_label }}" class="form-label">Número de Orden</label>
+            {{ form.numero_orden|add_class:"form-control" }}
+        </div>
+        
+        Resto de campos...
+        
+        <!-- <button type="submit" class="btn btn-primary">Guardar Registro</button>
+    </form>
+</div>
+{% endblock %} --> --> -->

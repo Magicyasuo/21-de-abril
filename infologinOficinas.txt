@@ -1,0 +1,223 @@
+=== Detalles de todos los usuarios procesados ===
+Username | Password | Grupo | Oficina
+---------------------------------------------------------
+subgerencia.talento.humano1 | Sv8ziblPAcFQpzsw | avanzado | Subgerencia Talento Humano
+subgerencia.talento.humano2 | mG8cPTno6BTi_Q71 | normal | Subgerencia Talento Humano
+subgerencia.talento.humano3 | X9Mfp1usUeHo_81j | normal | Subgerencia Talento Humano
+subgerencia.talento.humano4 | _A7LcD4KemsMp29B | normal | Subgerencia Talento Humano
+gerencia.direccion1 | EMqt467OKHm858Bt | avanzado | Gerencia - Dirección
+gerencia.direccion2 | aScpdM4jnZ-LBsKM | normal | Gerencia - Dirección
+gerencia.direccion3 | Bv2IxCXcQXTbPm4E | normal | Gerencia - Dirección
+gerencia.direccion4 | BfEnyqGVn-lWj9_9 | normal | Gerencia - Dirección
+planeacion1 | fnbN89eSLUWK8Xy3 | avanzado | Planeación
+planeacion2 | kH4qS-oiOGCs4RRc | normal | Planeación
+planeacion3 | uzey0P0GMFyfYD8C | normal | Planeación
+planeacion4 | YauLkg4YwL3FTT9q | normal | Planeación
+gestion.de.mercadeo.y.venta.de.servicios1 | CehJAHwLNp8T0GQF | avanzado | Gestión de Mercadeo y Venta de Servicios
+gestion.de.mercadeo.y.venta.de.servicios2 | HFxB9Z1X92SgeiZ7 | normal | Gestión de Mercadeo y Venta de Servicios
+gestion.de.mercadeo.y.venta.de.servicios3 | NA5A9gO4Q84ftkEf | normal | Gestión de Mercadeo y Venta de Servicios
+gestion.de.mercadeo.y.venta.de.servicios4 | ClnmMgaGufJIzB2R | normal | Gestión de Mercadeo y Venta de Servicios
+comunicacion.e.imagen.corporativa1 | tP60gwPDtTM7Xnd0 | avanzado | Comunicación e Imagen Corporativa
+comunicacion.e.imagen.corporativa2 | bOWq-8zj-l27hqJZ | normal | Comunicación e Imagen Corporativa
+comunicacion.e.imagen.corporativa3 | DzfPEG3BdM6MJWYp | normal | Comunicación e Imagen Corporativa
+comunicacion.e.imagen.corporativa4 | cx7PMO6_0t2XOqhL | normal | Comunicación e Imagen Corporativa
+talento.humano1 | b7_r02uW5sBkowqs | avanzado | Talento Humano
+talento.humano2 | 5dwMzYq9iWPH9BbS | normal | Talento Humano
+talento.humano3 | Am0M9AB6zYP0U6U6 | normal | Talento Humano
+talento.humano4 | 0RRg_ZDa7u1oORv1 | normal | Talento Humano
+gestion.de.la.calidad1 | 3HtB4fCq28s8lIS1 | avanzado | Gestión de la Calidad
+gestion.de.la.calidad2 | 8AZr-iL5GX0B5nVB | normal | Gestión de la Calidad
+gestion.de.la.calidad3 | 4YAK_LVDD-JN8r9g | normal | Gestión de la Calidad
+gestion.de.la.calidad4 | HE3PchsdjWDSIh7_ | normal | Gestión de la Calidad
+gestion.y.administracion.del.riesgo1 | fY3u-QwhPiLzxSpO | avanzado | Gestión y Administración del Riesgo
+gestion.y.administracion.del.riesgo2 | -fQXregCx_I9UC-u | normal | Gestión y Administración del Riesgo
+gestion.y.administracion.del.riesgo3 | eRzcf53WFfLcZzPP | normal | Gestión y Administración del Riesgo
+gestion.y.administracion.del.riesgo4 | azLvijMlHrblIO30 | normal | Gestión y Administración del Riesgo
+control.interno1 | KO8930EITIQYzrKx | avanzado | Control Interno
+control.interno2 | fyL7kVldzsB_6zqs | normal | Control Interno
+control.interno3 | 3Nm7W5AF0hqEVu98 | normal | Control Interno
+control.interno4 | rsDolh3R2PtR6JJu | normal | Control Interno
+gestion.de.seguridad.y.salud.en.el.trabajo1 | qUxWca78WqX_f98I | avanzado | Gestión de Seguridad y Salud en el Trabajo
+gestion.de.seguridad.y.salud.en.el.trabajo2 | N3z0sAFNeQpHBAtv | normal | Gestión de Seguridad y Salud en el Trabajo
+gestion.de.seguridad.y.salud.en.el.trabajo3 | 8hxb-PFuDS3PaCx_ | normal | Gestión de Seguridad y Salud en el Trabajo
+gestion.de.seguridad.y.salud.en.el.trabajo4 | 9e_lQaxT_ZQIZWpO | normal | Gestión de Seguridad y Salud en el Trabajo
+gestion.de.docencia.servicio.e.investigacion1 | B0mgSRBylbzD2duk | avanzado | Gestión de Docencia Servicio e Investigación
+gestion.de.docencia.servicio.e.investigacion2 | cGrtcHuj5g0pFHxg | normal | Gestión de Docencia Servicio e Investigación
+gestion.de.docencia.servicio.e.investigacion3 | AAVs9JiSqld6-cH5 | normal | Gestión de Docencia Servicio e Investigación
+gestion.de.docencia.servicio.e.investigacion4 | k3h6CKy-Wbxm7x1v | normal | Gestión de Docencia Servicio e Investigación
+control.disciplinario.interno1 | wEMVS99q5s2SBR4R | avanzado | Control Disciplinario Interno
+control.disciplinario.interno2 | zColEeTEXaLvEptG | normal | Control Disciplinario Interno
+control.disciplinario.interno3 | K7vvmjnfGEAcSYjR | normal | Control Disciplinario Interno
+control.disciplinario.interno4 | KPspK553OxNYV2Kj | normal | Control Disciplinario Interno
+gestion.ambiental1 | b11eylUbEG9wCMPt | avanzado | Gestión Ambiental
+gestion.ambiental2 | ULsstcOQHzNLMqsy | normal | Gestión Ambiental
+gestion.ambiental3 | eSXsbn89-LqmPy2M | normal | Gestión Ambiental
+gestion.ambiental4 | 8XBBsEDOyY9xBmSY | normal | Gestión Ambiental
+gestion.del.presupuesto1 | sVO7BOqCaeBZvz9S | avanzado | Gestión del Presupuesto
+gestion.del.presupuesto2 | u9TglRsVyVq0twGD | normal | Gestión del Presupuesto
+gestion.del.presupuesto3 | w1H9_GevCAhVT4oP | normal | Gestión del Presupuesto
+gestion.del.presupuesto4 | O2kml1x3gv5VbXc0 | normal | Gestión del Presupuesto
+gestion.de.la.contabilidad1 | r7nII3LvxkEy51_8 | avanzado | Gestión de la Contabilidad
+gestion.de.la.contabilidad2 | lwGREU5qmTulz3ym | normal | Gestión de la Contabilidad
+gestion.de.la.contabilidad3 | ivIH7gAbziRl0muF | normal | Gestión de la Contabilidad
+gestion.de.la.contabilidad4 | pZimYxWqx8kmIXRz | normal | Gestión de la Contabilidad
+gestion.de.tesoreria1 | UuypwJh0JZJiGohq | avanzado | Gestión de Tesorería
+gestion.de.tesoreria2 | Qq972nXk5-LtHNmt | normal | Gestión de Tesorería
+gestion.de.tesoreria3 | Xnsm6uStaF2oz-sm | normal | Gestión de Tesorería
+gestion.de.tesoreria4 | fcpbDv0doBiVBro4 | normal | Gestión de Tesorería
+gestion.del.gasto1 | 6NF9cfNp55Qug46P | avanzado | Gestión del Gasto
+gestion.del.gasto2 | 057oQ06mkj26TXU8 | normal | Gestión del Gasto
+gestion.del.gasto3 | TNXRFhmRlvIhFz3q | normal | Gestión del Gasto
+gestion.del.gasto4 | JTyEaUAnGGkjUR9t | normal | Gestión del Gasto
+gestion.de.cartera1 | dxDz8zmhBbzMVdcd | avanzado | Gestión de Cartera
+gestion.de.cartera2 | kRWGCbUMwV8k4Ef1 | normal | Gestión de Cartera
+gestion.de.cartera3 | QLkVM0Hs5EJPK9FM | normal | Gestión de Cartera
+gestion.de.cartera4 | ECR6U6jdEbzWLzpZ | normal | Gestión de Cartera
+facturacion1 | PlnU4SAHxmVJVBOF | avanzado | Facturación
+facturacion2 | LzYOTLMiXRvhhErY | normal | Facturación
+facturacion3 | bvxYJd_8eveoDvce | normal | Facturación
+facturacion4 | 5mXBpgMZaPyk9DEt | normal | Facturación
+cuentas.medicas.y.gestion.de.glosas1 | fupDCqYlK52F5Lgi | avanzado | Cuentas Médicas y Gestión de Glosas
+cuentas.medicas.y.gestion.de.glosas2 | Lqwv_dK9X5_fF20S | normal | Cuentas Médicas y Gestión de Glosas
+cuentas.medicas.y.gestion.de.glosas3 | U6aCKd6Kw0E6F8Zf | normal | Cuentas Médicas y Gestión de Glosas
+cuentas.medicas.y.gestion.de.glosas4 | HbuRwvAkKfZ5FPxC | normal | Cuentas Médicas y Gestión de Glosas
+defensa.juridica1 | zcVqa3S-74rK4em5 | avanzado | Defensa Jurídica
+defensa.juridica2 | t7yUxJ9t7OWEwKGF | normal | Defensa Jurídica
+defensa.juridica3 | 9NF8Wlv_CvCYdisY | normal | Defensa Jurídica
+defensa.juridica4 | lbA21rCWYkxHxSXe | normal | Defensa Jurídica
+contratacion1 | gprQQQfA1vLk-2vY | avanzado | Contratación
+contratacion2 | -1AT1yOvdwg5dhpA | normal | Contratación
+contratacion3 | nxPhLltGIxaBouoP | normal | Contratación
+contratacion4 | 79XxM4rKrugLvQiK | normal | Contratación
+estadisticas1 | sT2ISnWJ3i_Nf5Mv | avanzado | Estadísticas
+estadisticas2 | 8o8SQj7TR44yLTw9 | normal | Estadísticas
+estadisticas3 | kn6Rpc4XMJMpnPeA | normal | Estadísticas
+estadisticas4 | dvqb3f_eRqrYNnY7 | normal | Estadísticas
+unidad.de.vigilancia.epidemiologica1 | 8df5PsJsJvLsa4g0 | avanzado | Unidad de Vigilancia Epidemiológica
+unidad.de.vigilancia.epidemiologica2 | yWgx1sF-O_wf64oV | normal | Unidad de Vigilancia Epidemiológica
+unidad.de.vigilancia.epidemiologica3 | fJ9sFVM0ffELRtII | normal | Unidad de Vigilancia Epidemiológica
+unidad.de.vigilancia.epidemiologica4 | wK2E2YAMLNW-HffU | normal | Unidad de Vigilancia Epidemiológica
+gestion.de.las.tecnologias.y.sistemas.de.informacion1 | GMNuz1T-IEr-TFX7 | avanzado | Gestión de las Tecnologías y Sistemas de Información
+gestion.de.las.tecnologias.y.sistemas.de.informacion2 | 7EKHsAk-xIl9jajH | normal | Gestión de las Tecnologías y Sistemas de Información
+gestion.de.las.tecnologias.y.sistemas.de.informacion3 | d3MEEN4qWqtwT6DH | normal | Gestión de las Tecnologías y Sistemas de Información
+gestion.de.las.tecnologias.y.sistemas.de.informacion4 | MSM56PKPcKqgi0mQ | normal | Gestión de las Tecnologías y Sistemas de Información
+gestion.documental.archivo.central.y.unidad.de.correspondencia1 | -WdoZdK1s2bjaQZO | avanzado | Gestión Documental (Archivo Central y Unidad de Correspondencia)
+gestion.documental.archivo.central.y.unidad.de.correspondencia2 | jrYCMCqK_C5kj6BJ | normal | Gestión Documental (Archivo Central y Unidad de Correspondencia)
+gestion.documental.archivo.central.y.unidad.de.correspondencia3 | vLvrObJflt6dz6h8 | normal | Gestión Documental (Archivo Central y Unidad de Correspondencia)
+gestion.documental.archivo.central.y.unidad.de.correspondencia4 | 8Xw117SsJFQaohkk | normal | Gestión Documental (Archivo Central y Unidad de Correspondencia)
+historia.clinica1 | dsFl008-EvCNXhUZ | avanzado | Historia Clínica
+historia.clinica2 | ZJb-iMKfA-yLd7R3 | normal | Historia Clínica
+historia.clinica3 | MDqJ7U6x6vaaC4yq | normal | Historia Clínica
+historia.clinica4 | r-PPa1vq3HrhkjBK | normal | Historia Clínica
+almacen.gestion.de.insumos.suministros.inventario.y.activos1 | s-j7iEpZ3qOQ__lG | avanzado | Almacén/Gestión de Insumos, Suministros, Inventario y Activos.
+almacen.gestion.de.insumos.suministros.inventario.y.activos2 | X2wGANme7Vt8zaBu | normal | Almacén/Gestión de Insumos, Suministros, Inventario y Activos.
+almacen.gestion.de.insumos.suministros.inventario.y.activos3 | riRGVA_nC3qHca2_ | normal | Almacén/Gestión de Insumos, Suministros, Inventario y Activos.
+almacen.gestion.de.insumos.suministros.inventario.y.activos4 | 3gFdwUq3IDHNqnqk | normal | Almacén/Gestión de Insumos, Suministros, Inventario y Activos.
+gestion.de.redes.de.tecnologia.y.equipos.informaticos1 | pqMWH_flYcqXq36x | avanzado | Gestión de Redes de Tecnología y Equipos Informáticos
+gestion.de.redes.de.tecnologia.y.equipos.informaticos2 | sRCW4yN-G9ptCfqH | normal | Gestión de Redes de Tecnología y Equipos Informáticos
+gestion.de.redes.de.tecnologia.y.equipos.informaticos3 | OhSGURN2TIrtiUnX | normal | Gestión de Redes de Tecnología y Equipos Informáticos
+gestion.de.redes.de.tecnologia.y.equipos.informaticos4 | IPAjq-DVqmmto6U3 | normal | Gestión de Redes de Tecnología y Equipos Informáticos
+gestion.del.mantenimiento.de.la.infraestructura.fisica.hospitalaria.equipos.industriales.y.vehiculos1 | dL0S7WW3wq3NmYfm | avanzado | Gestión del Mantenimiento de la Infraestructura Física Hospitalaria, Equipos Industriales y Vehículos
+gestion.del.mantenimiento.de.la.infraestructura.fisica.hospitalaria.equipos.industriales.y.vehiculos2 | _EB9jc_qFoR32ah7 | normal | Gestión del Mantenimiento de la Infraestructura Física Hospitalaria, Equipos Industriales y Vehículos
+gestion.del.mantenimiento.de.la.infraestructura.fisica.hospitalaria.equipos.industriales.y.vehiculos3 | m1rZlAwGmLltHsRH | normal | Gestión del Mantenimiento de la Infraestructura Física Hospitalaria, Equipos Industriales y Vehículos
+gestion.del.mantenimiento.de.la.infraestructura.fisica.hospitalaria.equipos.industriales.y.vehiculos4 | U2NSAQRIFykGW5UD | normal | Gestión del Mantenimiento de la Infraestructura Física Hospitalaria, Equipos Industriales y Vehículos
+gestion.biomedica1 | dJXV7plrF_lq2NFl | avanzado | Gestión Biomédica
+gestion.biomedica2 | 4pqVkqvLXgwLWGIs | normal | Gestión Biomédica
+gestion.biomedica3 | s2r-DSRUqn4ioNv7 | normal | Gestión Biomédica
+gestion.biomedica4 | xeCTyLCu7oo01Mv8 | normal | Gestión Biomédica
+servicios.basicos1 | z9ziB9JuG0RPovTZ | avanzado | Servicios Básicos
+servicios.basicos2 | 3sDMGPxq3YIhatZ_ | normal | Servicios Básicos
+servicios.basicos3 | dJ-1It6lO4re5DnG | normal | Servicios Básicos
+servicios.basicos4 | 09gGPQh3xPUc_GmX | normal | Servicios Básicos
+gestion.de.la.seguridad.del.paciente1 | pasr54cCHnKXgBiN | avanzado | Gestión de la Seguridad del Paciente
+gestion.de.la.seguridad.del.paciente2 | qQNtL6PzpfbgWZId | normal | Gestión de la Seguridad del Paciente
+gestion.de.la.seguridad.del.paciente3 | pdT7fMKuVA8p5x_H | normal | Gestión de la Seguridad del Paciente
+gestion.de.la.seguridad.del.paciente4 | zu38cZdUJ7NbVv41 | normal | Gestión de la Seguridad del Paciente
+prevencion.y.control.de.iaas1 | 2wTl_Jg-aMMMQI2- | avanzado | Prevención y Control de IAAS
+prevencion.y.control.de.iaas2 | 151AKWcGUlm6TRiv | normal | Prevención y Control de IAAS
+prevencion.y.control.de.iaas3 | 6btVLnicpH1upssf | normal | Prevención y Control de IAAS
+prevencion.y.control.de.iaas4 | cz2cbpKt09vux32f | normal | Prevención y Control de IAAS
+humanizacion.en.los.servicios.de.salud1 | ET1GYqwqQ3HrXDst | avanzado | Humanización en los Servicios de Salud
+humanizacion.en.los.servicios.de.salud2 | nrvOyoQ-mXcka7sr | normal | Humanización en los Servicios de Salud
+humanizacion.en.los.servicios.de.salud3 | d3evwu_-FnIXTWE_ | normal | Humanización en los Servicios de Salud
+humanizacion.en.los.servicios.de.salud4 | LGjD7x7Onw7U3mo2 | normal | Humanización en los Servicios de Salud
+trabajo.social1 | 4l6B3HiME1u-SxSn | avanzado | Trabajo Social
+trabajo.social2 | LXBlKKWmha3gXhtG | normal | Trabajo Social
+trabajo.social3 | NoYlCiXymmer8yLw | normal | Trabajo Social
+trabajo.social4 | XIJlaF7oZpTpI52R | normal | Trabajo Social
+sistema.de.atencion.al.usuario1 | 3xSKF-b7Jp17uTQX | avanzado | Sistema de Atención al Usuario
+sistema.de.atencion.al.usuario2 | UO6N7sROSM1OvKe0 | normal | Sistema de Atención al Usuario
+sistema.de.atencion.al.usuario3 | FDjkoCIS7IhRjkSX | normal | Sistema de Atención al Usuario
+sistema.de.atencion.al.usuario4 | 5Gwg0wG1ggVlFmVl | normal | Sistema de Atención al Usuario
+gestion.del.riesgo.en.salud.rutas.de.atencion.integral.pym.vacunacion.mamografias.toma.de.muestras1 | uY6sy3Wrg4yOixhW | avanzado | Gestión del Riesgo en Salud, Rutas de Atención Integral PyM. (Vacunación, Mamografías, Toma de Muestras)
+gestion.del.riesgo.en.salud.rutas.de.atencion.integral.pym.vacunacion.mamografias.toma.de.muestras2 | RhDEh5gp1a1ure2o | normal | Gestión del Riesgo en Salud, Rutas de Atención Integral PyM. (Vacunación, Mamografías, Toma de Muestras)
+gestion.del.riesgo.en.salud.rutas.de.atencion.integral.pym.vacunacion.mamografias.toma.de.muestras3 | jTCGmYzWMesv2g_W | normal | Gestión del Riesgo en Salud, Rutas de Atención Integral PyM. (Vacunación, Mamografías, Toma de Muestras)
+gestion.del.riesgo.en.salud.rutas.de.atencion.integral.pym.vacunacion.mamografias.toma.de.muestras4 | fRw0KSEqRwaXKo51 | normal | Gestión del Riesgo en Salud, Rutas de Atención Integral PyM. (Vacunación, Mamografías, Toma de Muestras)
+consulta.general.medicina.general.odontologia.general.radiologia.odontologica1 | O_0OYckgWTHq0t5z | avanzado | Consulta General (Medicina General, Odontología General, Radiología Odontológica)
+consulta.general.medicina.general.odontologia.general.radiologia.odontologica2 | h0wkTosc7WTTmXkJ | normal | Consulta General (Medicina General, Odontología General, Radiología Odontológica)
+consulta.general.medicina.general.odontologia.general.radiologia.odontologica3 | KXLvoqS4Ytf-gkXF | normal | Consulta General (Medicina General, Odontología General, Radiología Odontológica)
+consulta.general.medicina.general.odontologia.general.radiologia.odontologica4 | 2VozQFyjbhumk4A8 | normal | Consulta General (Medicina General, Odontología General, Radiología Odontológica)
+consulta.complementaria.nutricion.psicologia.optometria.audiologia1 | tvCrrXodrr46XviC | avanzado | Consulta Complementaria (Nutrición, Psicología, Optometría, Audiología)
+consulta.complementaria.nutricion.psicologia.optometria.audiologia2 | LstkeLDbW6Arqvxc | normal | Consulta Complementaria (Nutrición, Psicología, Optometría, Audiología)
+consulta.complementaria.nutricion.psicologia.optometria.audiologia3 | sejH1bwuE8K4VaJr | normal | Consulta Complementaria (Nutrición, Psicología, Optometría, Audiología)
+consulta.complementaria.nutricion.psicologia.optometria.audiologia4 | Uooq71ciKa8jXUsZ | normal | Consulta Complementaria (Nutrición, Psicología, Optometría, Audiología)
+consulta.especializada.y.subespecialidad.intramural.extramural.telemedicina1 | Q9xTPy9XpHwckzW_ | avanzado | Consulta Especializada y Subespecialidad (Intramural, Extramural, Telemedicina)
+consulta.especializada.y.subespecialidad.intramural.extramural.telemedicina2 | SxlcaqT9tQW4XiLG | normal | Consulta Especializada y Subespecialidad (Intramural, Extramural, Telemedicina)
+consulta.especializada.y.subespecialidad.intramural.extramural.telemedicina3 | E3e_eElAFg2NahKR | normal | Consulta Especializada y Subespecialidad (Intramural, Extramural, Telemedicina)
+consulta.especializada.y.subespecialidad.intramural.extramural.telemedicina4 | 0ds_9eOcOr0GXdtg | normal | Consulta Especializada y Subespecialidad (Intramural, Extramural, Telemedicina)
+internacion.adulto.hospitalizacion.medicina.interna.hospitalizacion.quirurgicos1 | djuac42Pxl5HceGy | avanzado | Internación Adulto (Hospitalización Medicina Interna, Hospitalización Quirúrgicos)
+internacion.adulto.hospitalizacion.medicina.interna.hospitalizacion.quirurgicos2 | LgPgefETIhzWfRvg | normal | Internación Adulto (Hospitalización Medicina Interna, Hospitalización Quirúrgicos)
+internacion.adulto.hospitalizacion.medicina.interna.hospitalizacion.quirurgicos3 | NH90A5nYS6n9GJQf | normal | Internación Adulto (Hospitalización Medicina Interna, Hospitalización Quirúrgicos)
+internacion.adulto.hospitalizacion.medicina.interna.hospitalizacion.quirurgicos4 | FdOxWv9YqVeNSZY0 | normal | Internación Adulto (Hospitalización Medicina Interna, Hospitalización Quirúrgicos)
+unidad.de.cuidado.critico.intermedio.e.intensivo.adulto1 | DPzqS61CfvERTIcK | avanzado | Unidad de Cuidado Crítico (Intermedio e Intensivo - Adulto)
+unidad.de.cuidado.critico.intermedio.e.intensivo.adulto2 | fOGhWJs5iNutzaC9 | normal | Unidad de Cuidado Crítico (Intermedio e Intensivo - Adulto)
+unidad.de.cuidado.critico.intermedio.e.intensivo.adulto3 | hdKWMGPEtbdbyT0d | normal | Unidad de Cuidado Crítico (Intermedio e Intensivo - Adulto)
+unidad.de.cuidado.critico.intermedio.e.intensivo.adulto4 | 3CAhd-oodVArjGTY | normal | Unidad de Cuidado Crítico (Intermedio e Intensivo - Adulto)
+internacion.pediatrico.hospitalizacion.pediatria1 | RwCwfaA6jSat-mjO | avanzado | Internación Pediátrico (Hospitalización Pediatría)
+internacion.pediatrico.hospitalizacion.pediatria2 | 3KxVK60teDR-_fCq | normal | Internación Pediátrico (Hospitalización Pediatría)
+internacion.pediatrico.hospitalizacion.pediatria3 | 1zC6CCn8vywWWhGL | normal | Internación Pediátrico (Hospitalización Pediatría)
+internacion.pediatrico.hospitalizacion.pediatria4 | WdtOR7c7ni5SinUL | normal | Internación Pediátrico (Hospitalización Pediatría)
+internacion.neonatal.unidad.basica.neonatal.ucim.y.uci.neonatal1 | pAd4y_21S5_QAA-Y | avanzado | Internación Neonatal (Unidad Básica Neonatal, UCIM y UCI Neonatal)
+internacion.neonatal.unidad.basica.neonatal.ucim.y.uci.neonatal2 | YKGWcc7IejzkiQk8 | normal | Internación Neonatal (Unidad Básica Neonatal, UCIM y UCI Neonatal)
+internacion.neonatal.unidad.basica.neonatal.ucim.y.uci.neonatal3 | StVTP0cyHdKH4enS | normal | Internación Neonatal (Unidad Básica Neonatal, UCIM y UCI Neonatal)
+internacion.neonatal.unidad.basica.neonatal.ucim.y.uci.neonatal4 | TcmZZOVr8AkXBNIn | normal | Internación Neonatal (Unidad Básica Neonatal, UCIM y UCI Neonatal)
+obstetricia.y.atencion.del.parto.urgencias.maternas.atencion.del.parto.y.hospitalizacion.maternidad1 | W1ZOV6IjsI_v3gai | avanzado | Obstetricia y Atención del Parto (Urgencias Maternas, Atención del Parto y Hospitalización Maternidad)
+obstetricia.y.atencion.del.parto.urgencias.maternas.atencion.del.parto.y.hospitalizacion.maternidad2 | aXuHqtZqtXyrc9lv | normal | Obstetricia y Atención del Parto (Urgencias Maternas, Atención del Parto y Hospitalización Maternidad)
+obstetricia.y.atencion.del.parto.urgencias.maternas.atencion.del.parto.y.hospitalizacion.maternidad3 | gvhezHg1Wr3bKE7Z | normal | Obstetricia y Atención del Parto (Urgencias Maternas, Atención del Parto y Hospitalización Maternidad)
+obstetricia.y.atencion.del.parto.urgencias.maternas.atencion.del.parto.y.hospitalizacion.maternidad4 | 5xwOnRY2wigkWxxu | normal | Obstetricia y Atención del Parto (Urgencias Maternas, Atención del Parto y Hospitalización Maternidad)
+urgencias.y.procedimientos1 | Lz_97UGjw4KeMXyJ | avanzado | Urgencias y Procedimientos
+urgencias.y.procedimientos2 | qtUpVLYpLYZ2nRsl | normal | Urgencias y Procedimientos
+urgencias.y.procedimientos3 | ue3lOzCKN_5AGfLy | normal | Urgencias y Procedimientos
+urgencias.y.procedimientos4 | ypNjrmxQ04DJp_Hb | normal | Urgencias y Procedimientos
+referencia.y.contrarreferencia1 | vRoeuvAHKbCd1yXc | avanzado | Referencia y Contrarreferencia
+referencia.y.contrarreferencia2 | z6k4SWoVkSLj_Kz8 | normal | Referencia y Contrarreferencia
+referencia.y.contrarreferencia3 | vKOVZ2G1wUSONZBB | normal | Referencia y Contrarreferencia
+referencia.y.contrarreferencia4 | YvtEVCsnT7RMT9U5 | normal | Referencia y Contrarreferencia
+servicio.de.cirugia1 | jY9mJzDHBdo09ybh | avanzado | Servicio de Cirugía
+servicio.de.cirugia2 | 6vRuircKfyZhbTu2 | normal | Servicio de Cirugía
+servicio.de.cirugia3 | bRfQOQp_T7XfVGbq | normal | Servicio de Cirugía
+servicio.de.cirugia4 | f_PKn2FBa_FZbA5L | normal | Servicio de Cirugía
+servicio.de.esterilizacion1 | fUT-bqIlMb7Bv_iJ | avanzado | Servicio de Esterilización
+servicio.de.esterilizacion2 | xMecjE33R7MP6Ew5 | normal | Servicio de Esterilización
+servicio.de.esterilizacion3 | qBLlufsRoFTumWOm | normal | Servicio de Esterilización
+servicio.de.esterilizacion4 | ZtOmQ6QkXhs9Vsu6 | normal | Servicio de Esterilización
+servicio.de.laboratorio.clinico.toma.de.muestra.de.laboratorio.clinico1 | DJ0cSJm8J8Sxh3y_ | avanzado | Servicio de Laboratorio Clínico (Toma de Muestra de Laboratorio Clínico)
+servicio.de.laboratorio.clinico.toma.de.muestra.de.laboratorio.clinico2 | 7JrAsLUj2DdGa-FU | normal | Servicio de Laboratorio Clínico (Toma de Muestra de Laboratorio Clínico)
+servicio.de.laboratorio.clinico.toma.de.muestra.de.laboratorio.clinico3 | GAAAcux3eyLGPckM | normal | Servicio de Laboratorio Clínico (Toma de Muestra de Laboratorio Clínico)
+servicio.de.laboratorio.clinico.toma.de.muestra.de.laboratorio.clinico4 | 4z7CUNNpdkYMVCz4 | normal | Servicio de Laboratorio Clínico (Toma de Muestra de Laboratorio Clínico)
+servicio.de.imagenes.diagnosticas.tomografia.radiologia.ecografia1 | yacFUmbCeZu88L9T | avanzado | Servicio de Imágenes Diagnósticas (Tomografía, Radiología, Ecografía)
+servicio.de.imagenes.diagnosticas.tomografia.radiologia.ecografia2 | 9ilE1dV8XQ0Jusdj | normal | Servicio de Imágenes Diagnósticas (Tomografía, Radiología, Ecografía)
+servicio.de.imagenes.diagnosticas.tomografia.radiologia.ecografia3 | rQJnBDE2i1VOF1ux | normal | Servicio de Imágenes Diagnósticas (Tomografía, Radiología, Ecografía)
+servicio.de.imagenes.diagnosticas.tomografia.radiologia.ecografia4 | AtQM7tDa1kZB_Sy4 | normal | Servicio de Imágenes Diagnósticas (Tomografía, Radiología, Ecografía)
+banco.de.sangre.y.servicio.de.gestion.pre.transfusional1 | Kp4m86Scj7FKfcD5 | avanzado | Banco de Sangre y Servicio de Gestión Pre-Transfusional
+banco.de.sangre.y.servicio.de.gestion.pre.transfusional2 | fCOBcd2HoWZiB6PP | normal | Banco de Sangre y Servicio de Gestión Pre-Transfusional
+banco.de.sangre.y.servicio.de.gestion.pre.transfusional3 | YaBhqQucCcIcoc7F | normal | Banco de Sangre y Servicio de Gestión Pre-Transfusional
+banco.de.sangre.y.servicio.de.gestion.pre.transfusional4 | cCMymvAcpV55tBjc | normal | Banco de Sangre y Servicio de Gestión Pre-Transfusional
+servicio.farmaceutico1 | dJAUd47_HMIIvlww | avanzado | Servicio Farmacéutico
+servicio.farmaceutico2 | FIi23MoAG9BPFW_U | normal | Servicio Farmacéutico
+servicio.farmaceutico3 | J8ve6aL2QWGpZw3Q | normal | Servicio Farmacéutico
+servicio.farmaceutico4 | vVCBYXeWKfvEiPrH | normal | Servicio Farmacéutico
+servicio.de.terapias.terapia.fisica.respiratoria.ocupacional.fonoaudiologia1 | w0oiohH5-qvghlqR | avanzado | Servicio de Terapias (Terapia Física, Respiratoria, Ocupacional, Fonoaudiología)
+servicio.de.terapias.terapia.fisica.respiratoria.ocupacional.fonoaudiologia2 | iKyLUclU7CBSbDIn | normal | Servicio de Terapias (Terapia Física, Respiratoria, Ocupacional, Fonoaudiología)
+servicio.de.terapias.terapia.fisica.respiratoria.ocupacional.fonoaudiologia3 | zHEsR8OLualqQgqJ | normal | Servicio de Terapias (Terapia Física, Respiratoria, Ocupacional, Fonoaudiología)
+servicio.de.terapias.terapia.fisica.respiratoria.ocupacional.fonoaudiologia4 | gzl-cOgzag_J2iZ1 | normal | Servicio de Terapias (Terapia Física, Respiratoria, Ocupacional, Fonoaudiología)

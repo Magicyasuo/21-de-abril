@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #fefefe, #f2f2f2);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Ocultar scroll durante la animación inicial */
+        }
+        .hero {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            opacity: 0; /* Para animación */
+        }
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .hero p {
+            font-size: 1rem;
+            color: #333;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .hero strong {
+            color: #003366;
+        }
+
+        .login-container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 2rem;
+            max-width: 400px;
+            margin: 0 auto;
+            opacity: 0; /* Para animación */
+        }
+        .login-container h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .btn-primary {
+            background-color: #0069d9 !important;
+            border: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #005bb5 !important;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .footer-info {
+            text-align: center;
+            color: #555;
+            font-size: 0.85rem;
+            margin-top: 3rem;
+            opacity: 0; /* Para animación */
+        }
+        .footer-info p {
+            margin: 0.25rem 0;
+        }
+        /* Contenedor principal para animaciones */
+        #mainContainer {
+            opacity: 0;
+            padding-top: 2rem;
+        }
+        .footer-info {
+    margin-top: 3rem;
+    padding: 1rem;
+    background: #003366;
+    color: #ffffff;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+.footer-info p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+html, body {
+    height: 100%; /* Asegura que el HTML y el body ocupen toda la pantalla */
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Configura el flujo de elementos en columna */
+}
+
+main {
+    flex: 1; /* Hace que el contenido principal ocupe todo el espacio disponible */
+}
+
+footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    background: #003366;
+    color: #ffffff;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+    </style>
+</head>
+<body>
+    <main>
+
+    <div id="mainContainer">
+        <div class="container">
+            <!-- Hero Section con información de la empresa y el software -->
+            <div class="hero animate__animated animate__fadeInDown">
+                <h1>Hospital del Sarare</h1>
+                <p><strong>Central de Archivos del Sarare</strong> - Sistema de Gestión Documental</p>
+                <!-- <p>Administra y controla toda la información archivística de manera eficiente, segura y transparente.</p> -->
+                <!-- <p>Facilitando la toma de decisiones, la conservación de la memoria institucional y el cumplimiento de estándares archivísticos.</p> -->
+            </div>
+
+            <!-- Contenedor de Login -->
+            <div class="login-container animate__animated animate__fadeInUp animate__delay-1s">
+                <h2>Iniciar sesión</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Usuario</label>
+                        <input type="text" name="username" class="form-control" id="id_username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" id="id_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</button>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+
+    
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animación principal del contenedor
+            anime({
+                targets: '#mainContainer',
+                opacity: [0,1],
+                duration: 1000,
+                easing: 'easeOutExpo'
+            });
+
+            // Permitir scroll después de la animación
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+            }, 1200);
+        });
+    </script>
+        </main>
+        <div class="footer-info animate__animated animate__fadeInUp animate__delay-2s">
+            <p>© {{ current_year }} Hospital del Sarare - Central de Archivos del Sarare</p>
+            <p>Desarrollado para optimizar procesos, garantizar la conservación de documentos y brindar accesibilidad a la información.</p>
+        </div>
+
+</body>
+</html>

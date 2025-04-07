@@ -1,0 +1,476 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual de Usuario - Archivo Sarare</title>
+  <!-- Bootstrap CSS desde CDN -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Fuente de Google -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <!-- Iconos de Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <!-- Estilos Personalizados -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+      <!-- Bootstrap -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+      <!-- Bootstrap Icons -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <style>
+    /* Fuente global */
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, #f4f6f8, #e9edf1);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    /* Barra de navegación */
+    .navbar {
+      background-color: #f8f9fa;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .navbar-brand, .navbar-nav .nav-link {
+      color: #003366 !important;
+      font-weight: bold;
+      transition: color 0.2s ease;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #0056b3 !important;
+    }
+    /* Sección Hero */
+    .hero {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #003366;
+    }
+    .hero p {
+      font-size: 1rem;
+      color: #555;
+    }
+    /* Títulos de secciones */
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #003366;
+      margin: 1.5rem 0 1rem;
+    }
+    /* Footer */
+    footer {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: #003366;
+      color: #fff;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+    }
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    /* Botón de acción */
+    .login-btn {
+      background: #0069d9;
+      color: #fff;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .login-btn:hover {
+      background: #005bb5;
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Barra de navegación -->
+<nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+  <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+          <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+          Hospital del Sarare
+      </a>
+      <span class="navbar-text">
+          {% if request.user.is_authenticated %}
+              Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+          {% else %}
+              <a href="{% url 'login' %}">Iniciar sesión</a>
+          {% endif %}
+      </span>
+  </div>
+</nav>
+
+<!-- Contenido Principal -->
+<main class="container mt-4" id="mainContainer">
+  <!-- Sección Hero -->
+  <!-- <div class="hero">
+    <h1>Bienvenid@ al Sistema de Gestión Documental <span class="ml-2">📁✨</span></h1>
+    <p class="lead">
+      Administre y consulte su archivo histórico de manera <span class="text-success">eficiente</span> y <span class="text-info">segura</span>.
+    </p>
+    <a href="#" class="btn login-btn">Iniciar Sesión <i class="fas fa-sign-in-alt"></i></a>
+  </div> -->
+
+  <!-- Título del Manual -->
+  <h2 class="section-title" id="manualUsuario">Manual de Usuario 📑</h2>
+
+  <!-- Accordion del Manual -->
+  <div id="accordion">
+
+    <!-- 1. Introducción -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading1" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse1">
+        <h5 class="mb-0">
+          <i class="fas fa-info-circle"></i> 1. Introducción <span>🔍</span>
+        </h5>
+      </div>
+      <div id="collapse1" class="collapse show" data-parent="#accordion">
+        <div class="card-body">
+          <p>
+            El Sistema de Gestión Documental – Archivo Sarare está diseñado para administrar de manera eficiente el archivo histórico del Hospital del Sarare. Permite a los funcionarios registrar, gestionar y consultar información documental de forma digitalizada, garantizando trazabilidad y seguridad de los documentos.
+          </p>
+          <p>
+            Este manual fusiona las indicaciones de uso de la plataforma con las pautas para el diligenciamiento del <strong>Formato Único de Inventarios Documentales (FUID)</strong> y la terminología clave. Está dirigido tanto a los <span class="text-primary">Usuarios Líderes de Oficina</span> como a los <span class="text-primary">Usuarios Documentales</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Objetivo -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading2" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse2">
+        <h5 class="mb-0">
+          <i class="fas fa-bullseye"></i> 2. Objetivo <span>🎯</span>
+        </h5>
+      </div>
+      <div id="collapse2" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <ul>
+            <li>Establecer lineamientos claros para la correcta creación, consulta y administración de los FUIDs.</li>
+            <li>Unificar criterios para la gestión de la documentación, abarcando registro, inventario y conservación.</li>
+            <li>Garantizar el manejo de la información cumpliendo los principios archivísticos y requerimientos de seguridad institucional.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Alcance -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading3" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse3">
+        <h5 class="mb-0">
+          <i class="fas fa-ruler-combined"></i> 3. Alcance <span>📏</span>
+        </h5>
+      </div>
+      <div id="collapse3" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <ul>
+            <li>Incluye todos los subprocesos de la entidad relacionados con la gestión documental.</li>
+            <li>Aplica a los responsables de archivo de gestión y archivo central, así como a los equipos involucrados en la creación y administración de inventarios documentales.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Definiciones Principales -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading4" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse4">
+        <h5 class="mb-0">
+          <i class="fas fa-book-open"></i> 4. Definiciones Principales <span>📚</span>
+        </h5>
+      </div>
+      <div id="collapse4" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <ul>
+            <li><strong>Archivo:</strong> Conjunto de documentos acumulados de manera natural por una persona o entidad.</li>
+            <li><strong>Archivo Central:</strong> Unidad que coordina y controla los archivos de gestión, recibiendo documentos transferidos.</li>
+            <li><strong>Archivo de Gestión:</strong> Archivo de la oficina productora que conserva documentación en trámite y de uso continuo.</li>
+            <li><strong>Archivo Electrónico:</strong> Conjunto de documentos en soporte digital producidos y tratados archivísticamente.</li>
+            <li><strong>Archivo Histórico:</strong> Documentos con valor permanente para la investigación, la ciencia y la cultura.</li>
+            <li><strong>Carpeta:</strong> Unidad de conservación que protege documentos para su almacenamiento.</li>
+            <li><strong>Código:</strong> Identificación asignada a oficinas, series y subseries según el sistema de clasificación.</li>
+            <li><strong>Inventario Documental (FUID):</strong> Instrumento que describe de forma precisa las series o asuntos de un fondo documental.</li>
+            <li><strong>Serie Documental:</strong> Documentos organizados por actividad o proceso archivístico.</li>
+            <li><strong>Subserie Documental:</strong> Conjunto de documentos que forman parte de una serie, con características específicas.</li>
+            <li><strong>Tipo Documental:</strong> Unidad documental simple con formato y contenido distintivos.</li>
+            <li><strong>Unidad de Conservación:</strong> Elemento (caja, carpeta, tomo, etc.) que agrupa documentos para garantizar su preservación.</li>
+            <li><strong>Unidad Documental:</strong> Conjunto de documentos del mismo tipo o varios tipos tratados como un todo.</li>
+            <li><strong>Fechas Extremas:</strong> Fecha inicial y final de los documentos; si no existe, se registra “S.F.” (Sin Fecha).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Roles de Usuario -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading5" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse5">
+        <h5 class="mb-0">
+          <i class="fas fa-users"></i> 5. Roles de Usuario <span>👥</span>
+        </h5>
+      </div>
+      <div id="collapse5" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <h6>Usuario Líder de Oficina</h6>
+          <ul>
+            <li>Responsable de la creación y administración de los FUIDs.</li>
+            <li>Gestiona la edición y actualización de la información asociada.</li>
+          </ul>
+          <h6>Usuario Documental</h6>
+          <ul>
+            <li>Colaborador autorizado para gestionar (crear, modificar o eliminar) los registros dentro de los FUIDs de su oficina.</li>
+            <li>No posee privilegios para modificar FUIDs completos, solo los registros que haya creado.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Acceso al Sistema -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading6" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse6">
+        <h5 class="mb-0">
+          <i class="fas fa-key"></i> 6. Acceso al Sistema <span>🔑</span>
+        </h5>
+      </div>
+      <div id="collapse6" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <h6>Ingreso a la Plataforma</h6>
+          <p>
+            Abra su navegador web e ingrese la dirección <code>192.168.2.23</code> desde su navegador.
+          </p>
+          <h6>Recuperación de Contraseña</h6>
+          <p>
+            En caso de olvido o pérdida de la contraseña, contacte al administrador del sistema para el restablecimiento.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Creación y Diligenciamiento de FUIDs -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading7" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse7">
+        <h5 class="mb-0">
+          <i class="fas fa-edit"></i> 7. Creación y Diligenciamiento de FUIDs <span>🗃️</span>
+        </h5>
+      </div>
+      <div id="collapse7" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <h6>7.1. Objetivo del FUID</h6>
+          <p>
+            El FUID permite llevar el control detallado de las series documentales producidas en cada oficina, registrando:
+          </p>
+          <ul>
+            <li><strong>Entidad Productora:</strong> Nombre de la institución que genera los documentos.</li>
+            <li><strong>Unidad Administrativa y Oficina Productora:</strong> Dependencia que produce y gestiona la documentación.</li>
+            <li><strong>Objeto:</strong> Propósito del inventario (transferencias, valoración de fondos acumulados, fusiones, inventarios individuales, etc.).</li>
+          </ul>
+          <h6>7.2. Creación de un FUID</h6>
+          <ol>
+            <li>Ingrese al sistema y seleccione la sección <strong>"FUIDs"</strong>.</li>
+            <li>Haga clic en <strong>"Crear FUID"</strong>.</li>
+            <li>Complete los campos obligatorios:
+              <ul>
+                <li>Entidad Productora</li>
+                <li>Unidad Administrativa</li>
+                <li>Oficina Productora</li>
+                <li>Objeto del FUID</li>
+                <li>Datos del Responsable (Elaborado por, Entregado por, Recibido por)</li>
+              </ul>
+            </li>
+            <li>Guarde los cambios haciendo clic en <strong>"Guardar"</strong>.</li>
+          </ol>
+          <h6>7.3. Modificación de un FUID</h6>
+          <ol>
+            <li>Vaya a la <strong>"Lista de FUIDs"</strong>.</li>
+            <li>Seleccione el FUID a modificar.</li>
+            <li>Presione <strong>"Editar"</strong> y realice los ajustes necesarios.</li>
+            <li>Haga clic en <strong>"Guardar"</strong> para confirmar.</li>
+          </ol>
+          <p class="text-danger">
+            <strong>Importante:</strong> Solo los Usuarios Líderes de Oficina pueden modificar un FUID. No es posible eliminar un FUID una vez creado.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Gestión de Registros dentro de un FUID -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading8" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse8">
+        <h5 class="mb-0">
+          <i class="fas fa-clipboard-list"></i> 8. Gestión de Registros <span>📝</span>
+        </h5>
+      </div>
+      <div id="collapse8" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <h6>8.1. Creación de un Registro</h6>
+          <ol>
+            <li>Acceda a la <strong>"Lista de FUIDs"</strong> y seleccione el FUID correspondiente, luego haga clic en <strong>"Ver"</strong>.</li>
+            <li>Dentro del detalle, presione <strong>"Agregar Registro"</strong>.</li>
+            <li>Complete la información requerida:
+              <ul>
+                <li><strong>Número de Orden:</strong> Consecutivo para cada nuevo registro.</li>
+                <li><strong>Código de Serie/Subserie:</strong> Según el sistema de clasificación (CCD, TRD o TVD).</li>
+                <li><strong>Unidad Documental:</strong> Nombre identificatorio (carpeta, expediente, tomo, etc.).</li>
+                <li><strong>Fechas Inicial y Final:</strong> Formato AAAA-MM-DD; use “S.F.” si no hay fecha.</li>
+                <li><strong>Tipo de Soporte:</strong> Físico (papel) o Electrónico.</li>
+                <li><strong>Ubicación y Detalles:</strong> Indique caja, carpeta, tomo o ruta digital.</li>
+                <li><strong>Notas (opcional):</strong> Observaciones (saltos en numeración, estado de conservación, documentos sensibles, etc.).</li>
+              </ul>
+            </li>
+            <li>Presione <strong>"Guardar"</strong> para finalizar.</li>
+          </ol>
+          <h6>8.2. Edición de un Registro</h6>
+          <ol>
+            <li>Acceda al FUID correspondiente en la <strong>"Lista de FUIDs"</strong>.</li>
+            <li>Ubique el registro y presione <strong>"Editar"</strong>.</li>
+            <li>Ajuste los campos necesarios y guarde los cambios.</li>
+          </ol>
+          <h6>8.3. Eliminación de Registros</h6>
+          <p>
+            Ningun usuario puede eliminar registros, solo se puede desligarde un FUID. Los FUIDs completos no se pueden eliminar
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Gestión de Documentos Adjuntos -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading9" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse9">
+        <h5 class="mb-0">
+          <i class="fas fa-paperclip"></i> 9. Gestión de Documentos Adjuntos <span>📎</span>
+        </h5>
+      </div>
+      <div id="collapse9" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <h6>9.1. Adjuntar Documentos</h6>
+          <ol>
+            <li>Al crear o editar un registro, busque la opción <strong>"Adjuntar Documento"</strong>.</li>
+            <li>Seleccione el archivo desde su dispositivo.</li>
+            <li>
+              <strong>Restricciones:</strong>
+              <ul>
+                <li>Tamaño máximo: 10 MB por archivo.</li>
+                <li>Formatos permitidos: PDF, Word, Excel, imágenes, etc.</li>
+              </ul>
+            </li>
+            <li>Haga clic en <strong>"Guardar"</strong> para subir el documento a la nube de Microsoft Azure.</li>
+          </ol>
+          <h6>9.2. Visualización y Descarga de Documentos</h6>
+          <ol>
+            <li>Acceda a la <strong>"Lista de FUIDs"</strong> y seleccione el FUID.</li>
+            <li>Haga clic en <strong>"Ver"</strong> para entrar al detalle de registros.</li>
+            <li>En la columna <strong>"Documento"</strong>, presione <strong>"Ver Documento"</strong>.</li>
+            <li>Seleccione la opción de descarga para guardar el archivo localmente.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Exportación de Datos -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading10" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse10">
+        <h5 class="mb-0">
+          <i class="fas fa-file-export"></i> 10. Exportación de Datos <span>📈</span>
+        </h5>
+      </div>
+      <div id="collapse10" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <p>
+            Desde la <strong>"Lista de FUIDs"</strong> o <strong>"Lista de Registros"</strong>, haga clic en <strong>"Exportar a Excel"</strong> y guarde o abra el archivo generado para su análisis o respaldo.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Seguridad y Restricciones -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading11" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse11">
+        <h5 class="mb-0">
+          <i class="fas fa-shield-alt"></i> 11. Seguridad y Restricciones <span>🔒</span>
+        </h5>
+      </div>
+      <div id="collapse11" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <h6>Eliminación y Modificación</h6>
+          <ul>
+            <li>No se pueden eliminar FUIDs ya creados.</li>
+            <li>Solo el creador de un registro puede eliminarlo.</li>
+            <li>La modificación de series y subseries está restringida al administrador del sistema.</li>
+          </ul>
+          <h6>Accesibilidad y Visibilidad</h6>
+          <ul>
+            <li>Cada usuario solo ve los FUIDs y registros de su propia oficina.</li>
+            <li>Se requiere permiso especial para consultar información de otras oficinas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. Responsables -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading12" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse12">
+        <h5 class="mb-0">
+          <i class="fas fa-user-check"></i> 12. Responsables <span>📝</span>
+        </h5>
+      </div>
+      <div id="collapse12" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <ul>
+            <li><strong>Elaborado por:</strong> Nombre, cargo y firma de la persona encargada de crear el inventario; lugar y fecha de elaboración.</li>
+            <li><strong>Entregado por:</strong> Nombre, cargo y firma de quien hace entrega del inventario; lugar y fecha de entrega.</li>
+            <li><strong>Recibido por:</strong> Nombre, cargo y firma de quien recibe el inventario; lugar y fecha de recepción.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. Contacto y Soporte -->
+    <div class="card mb-3">
+      <div class="card-header" id="heading13" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse13">
+        <h5 class="mb-0">
+          <i class="fas fa-headset"></i> 13. Contacto y Soporte <span>📞</span>
+        </h5>
+      </div>
+      <div id="collapse13" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+          <p>
+            Para consultas técnicas o inconvenientes en el uso del sistema, comuníquese con la <strong>Oficina Central de Archivo</strong> del Hospital del Sarare.
+          </p>
+          <p>
+            <strong>Correo:</strong> <a href="mailto:soporte@hospitaldelsarare.com">soporte@hospitaldelsarare.com</a><br>
+            <strong>Teléfono:</strong> 3108660167
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- Fin de Accordion -->
+</main>
+
+<!-- Pie de página -->
+<footer id="contacto">
+  <p>© 2025 - Hospital del Sarare. Todos los derechos reservados.</p>
+  <!-- <p><em>Sistema de Gestión Documental</em> | Creado con <span style="color: red;">❤</span> y Bootstrap</p> -->
+</footer>
+
+<!-- Scripts: jQuery, Popper.js y Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  // Animación opcional para revelar el contenido principal
+  $(document).ready(function(){
+    $('#mainContainer').animate({opacity: 1}, 1000);
+  });
+</script>
+
+</body>
+</html>

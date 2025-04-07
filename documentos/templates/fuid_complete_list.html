@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!--
+    -----------------------------------------------------------------------------------
+    Archivo: fuid-registros.html
+    Descripción:
+      Página de ejemplo para mostrar registros de FUID con un diseño profesional,
+      responsivo y organizado, cumpliendo con los requerimientos:
+        - Usar DataTables con soporte de reordenación de columnas (colReorder).
+        - Aplicar la paleta de colores y estilos proporcionados.
+        - Mantener la página atractiva y legible, con un sistema de filtros coherente.
+        - Sin animaciones, pero con código de nivel senior y muy comentado.
+      Se han añadido secciones como la barra de navegación y el pie de página para
+      completar el estilo profesional y cohesivo del sitio.
+    -----------------------------------------------------------------------------------
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsivo -->
+  <title>FUID - Registros Mejorados</title>
+
+  <!-- ==================== HOJAS DE ESTILO ==================== -->
+  <!-- CSS de Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <!-- Íconos de Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+  <!-- colReorder CSS para DataTables (permite reordenar columnas con drag-and-drop) -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.5.5/css/colReorder.bootstrap5.min.css">
+
+  <!--
+    A continuación, se incluye el bloque de estilos proporcionado por la paleta
+    de colores indicada, adaptado a este proyecto. Se añaden comentarios
+    adicionales para mantener un alto nivel de claridad y consistencia.
+  -->
+  <style>
+
+    
+    /* ----------------------------------------------------------------------------------
+       PALETA DE COLORES Y ESTILOS GLOBALES
+       ---------------------------------------------------------------------------------- */
+
+    /* Fuente global */
+
+    #tablaFUID_filter {
+    display: none !important;
+}
+
+th[data-order="asc"]::after {
+  content: " ▲";
+  color: #003366;
+  font-size: 0.75rem;
+}
+th[data-order="desc"]::after {
+  content: " ▼";
+  color: #003366;
+  font-size: 0.75rem;
+}
+
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, #f4f6f8, #e9edf1); /* Fondo limpio y profesional */
+      color: #333; /* Texto en gris oscuro para legibilidad */
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    /* Ajuste del HTML y body para ocupar toda la pantalla en altura */
+    html, body {
+      height: 100%;
+      display: flex;
+      flex-direction: column; /* Apilar de arriba a abajo */
+    }
+
+    /* El main crecerá para ocupar el espacio restante disponible */
+    main {
+      flex: 1;
+    }
+
+    /* Barra de navegación */
+    .navbar {
+      background-color: #f8f9fa; /* Un tono claro */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    }
+    .navbar-brand, .navbar-nav .nav-link, .navbar-text a {
+      color: #003366 !important; /* Azul oscuro */
+      font-weight: bold;
+      transition: color 0.2s ease;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #0056b3 !important; /* Azul más vibrante en hover */
+    }
+
+    /* HERO o cabecera grande con título y contexto */
+    .hero {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 2rem;
+      margin: 2rem 0; /* Espaciado vertical */
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #003366;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 0;
+    }
+
+    /* Encabezados de sección con estilo */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #003366;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+
+    /* Tarjeta para agrupar filtros o contenido */
+    .filter-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Estilo de las etiquetas de filtro */
+    .filter-label {
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: inline-block;
+      font-size: 0.9rem;
+      color: #003366;
+    }
+
+    /* Ajustes en inputs para filtros */
+    .filter-input, .form-select {
+      font-size: 0.85rem;
+    }
+
+    /* Contenedor de la tabla */
+    .table-container {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 1rem;
+    }
+
+    /* Estilos de la tabla con DataTables */
+    .table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: auto;
+    }
+    .table th, .table td {
+      font-size: 0.85rem;
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+      white-space: nowrap;     /* Evita que el texto se desborde en múltiples líneas */
+      overflow: hidden;        /* Oculta texto que no cabe */
+      text-overflow: ellipsis; /* Añade "..." si el texto es demasiado largo */
+    }
+    .table thead th {
+      background-color: #f8f9fa; /* Tono claro para distinguir el encabezado */
+      color: #003366;
+      font-weight: 600;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f8f9fa;
+    }
+    .table-striped tbody tr:hover {
+      background-color: #e9ecef;
+    }
+
+    /* Ajustes para DataTables */
+    .dataTables_wrapper .dataTables_filter {
+      float: left !important;
+      text-align: left;
+    }
+    .dataTables_wrapper .dataTables_paginate {
+      float: left !important;
+    }
+    .dataTables_info {
+      font-size: 0.85rem;
+    }
+
+    /* Botones generales */
+    .btn-primary {
+      background-color: #0069d9 !important;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-primary:hover {
+      background-color: #005bb5 !important;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .btn-secondary {
+      background-color: #6c757d !important;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268 !important;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Otros botones de ejemplo (Info, Warning) */
+    .btn-warning {
+      background-color: #ffc107 !important;
+      color: #212529;
+      border: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-warning:hover {
+      background-color: #e0a800 !important;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .btn-info {
+      background-color: #17a2b8 !important;
+      border: none;
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-info:hover {
+      background-color: #138496 !important;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Pie de página */
+    footer {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: #003366;
+      color: #ffffff;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+    }
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    /* Media Queries para mayor responsividad */
+    @media (max-width: 992px) {
+      /* Ajustes para pantallas medianas a pequeñas */
+      .filter-card .row > [class*="col-"] {
+        margin-bottom: 0.75rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      /* Ajustes para pantallas muy pequeñas */
+      .hero h1 {
+        font-size: 1.5rem;
+      }
+      .table thead {
+        display: none; /* Ocultamos el encabezado en pantallas muy pequeñas */
+      }
+      .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+      }
+      .table td {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal; /* Permite el salto de línea */
+        text-overflow: initial;
+      }
+      .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: 600;
+        color: #003366;
+        white-space: nowrap;
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <!--
+    ===================================================================================
+    BARRA DE NAVEGACIÓN
+    ===================================================================================
+    Incluimos una barra de navegación superior con estilo Bootstrap para
+    una apariencia profesional y funcional. Enlazamos un nombre de proyecto
+    como ejemplo (FUID Registros).
+  -->
+  <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+            Hospital del Sarare
+        </a>
+        <span class="navbar-text">
+            {% if request.user.is_authenticated %}
+                Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+        </span>
+    </div>
+</nav>
+
+  <!--
+    ===================================================================================
+    CONTENIDO PRINCIPAL
+    ===================================================================================
+  -->
+  <div class="container-fluid animate__animated animate__fadeInUp" id="mainContainer">
+  
+    <!-- Título de la Página -->
+    <h1 class="page-title animate__animated animate__fadeInDown text-primary">
+      <i class="bi bi-file-earmark-text-fill"></i> Detalle del FUID #{{ fuid.id }}
+    </h1>
+  
+    <!-- Tarjeta de Información General del FUID -->
+    <div class="filter-card p-3 mt-2 rounded shadow-sm bg-white border animate__animated animate__fadeInUp">
+      <h6 class="text-primary fw-bold"><i class="bi bi-info-circle"></i> Información General del FUID</h6>
+  
+      <!-- Botón de Exportación -->
+      <div class="text-end mb-2">
+        <a href="{% url 'export_fuid_to_excel' fuid.id %}" class="btn btn-success btn-sm">
+          <i class="bi bi-file-earmark-spreadsheet-fill"></i> Exportar a Excel
+        </a>
+      </div>
+  
+      <!-- Contenido de Información -->
+      <div class="row g-3">
+        <div class="col-md-4"><strong>Entidad Productora:</strong> <span>{{ fuid.entidad_productora }}</span></div>
+        <div class="col-md-4"><strong>Unidad Administrativa:</strong> <span>{{ fuid.unidad_administrativa }}</span></div>
+        <div class="col-md-4"><strong>Oficina Productora:</strong> <span>{{ fuid.oficina_productora }}</span></div>
+        <div class="col-md-4"><strong>Objeto:</strong> <span>{{ fuid.objeto }}</span></div>
+        <div class="col-md-4"><strong>Fecha de Creación:</strong> <span>{{ fuid.fecha_creacion|date:"Y-m-d H:i" }}</span></div>
+      </div>
+    </div>
+  
+    <!-- Tarjeta de Responsables -->
+    <div class="filter-card p-3 mt-3 rounded shadow-sm bg-white border animate__animated animate__fadeInUp animate__delay-1s">
+      <h6 class="text-primary fw-bold"><i class="bi bi-people"></i> Responsables</h6>
+      <div class="row g-3">
+        <!-- Elaborado Por -->
+        <div class="col-md-4">
+          <div class="person-block border rounded p-2 shadow-sm">
+            <h6 class="person-title text-secondary"><i class="bi bi-pencil-square"></i> Elaborado Por</h6>
+            <p><strong>Nombre:</strong> {{ fuid.elaborado_por_nombre }}</p>
+            <p><strong>Cargo:</strong> {{ fuid.elaborado_por_cargo }}</p>
+            <p><strong>Lugar:</strong> {{ fuid.elaborado_por_lugar }}</p>
+            <p><strong>Fecha:</strong> {{ fuid.elaborado_por_fecha }}</p>
+          </div>
+        </div>
+        <!-- Entregado Por -->
+        <div class="col-md-4">
+          <div class="person-block border rounded p-2 shadow-sm">
+            <h6 class="person-title text-secondary"><i class="bi bi-arrow-right-square"></i> Entregado Por</h6>
+            <p><strong>Nombre:</strong> {{ fuid.entregado_por_nombre }}</p>
+            <p><strong>Cargo:</strong> {{ fuid.entregado_por_cargo }}</p>
+            <p><strong>Lugar:</strong> {{ fuid.entregado_por_lugar }}</p>
+            <p><strong>Fecha:</strong> {{ fuid.entregado_por_fecha }}</p>
+          </div>
+        </div>
+        <!-- Recibido Por -->
+        <div class="col-md-4">
+          <div class="person-block border rounded p-2 shadow-sm">
+            <h6 class="person-title text-secondary"><i class="bi bi-check2-square"></i> Recibido Por</h6>
+            <p><strong>Nombre:</strong> {{ fuid.recibido_por_nombre }}</p>
+            <p><strong>Cargo:</strong> {{ fuid.recibido_por_cargo }}</p>
+            <p><strong>Lugar:</strong> {{ fuid.recibido_por_lugar }}</p>
+            <p><strong>Fecha:</strong> {{ fuid.recibido_por_fecha }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+  
+  </div>
+  
+
+
+  
+  <!-- contenidofuid -->
+  <main class="container-fluid my-4"><div class="hero">
+      <h1 class="h5 text-primary">Registros FUID - Gestión Documental</h1>
+      <p class="small text-muted">Filtra y encuentra registros de forma eficiente.</p>
+      <button id="toggleFiltros" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-funnel"></i> Mostrar Filtros
+      </button>
+    </div>
+    
+    <!-- Tarjeta de Filtros Compacta con Tabs -->
+    <div class="filter-card p-3 mt-2 rounded shadow-sm bg-white border" id="contenedorFiltros" style="display: none;">
+      <h6 class="text-primary fw-bold text-center mb-3"><i class="bi bi-funnel"></i> Filtros</h6>
+    
+      <!-- Pestañas de filtros -->
+      <ul class="nav nav-tabs mb-2" id="filtroTabs">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#filtroFecha">Fechas</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#filtroIdentificacion">Identificación</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#filtroUbicacion">Ubicación</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#filtroSoportes">Soportes</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#filtroEstado">Estado</a></li>
+      </ul>
+    
+      <!-- Contenido de cada pestaña -->
+      <div class="tab-content">
+    
+        <!-- Pestaña Fechas -->
+        <div class="tab-pane fade show active" id="filtroFecha">
+          <h6 class="text-muted text-center small fw-bold mb-2">Filtrar por Fechas</h6>
+          <div class="row g-2">
+            <div class="col-6"><label class="small text-muted">Fecha Archivo</label><input type="date" id="filtroFechaArchivo" class="form-control form-control-sm filtro-auto-close"></div>
+            <div class="col-6"><label class="small text-muted">Fecha Inicial</label><input type="date" id="filtroFechaInicial" class="form-control form-control-sm filtro-auto-close"></div>
+            <div class="col-6"><label class="small text-muted">Fecha Final</label><input type="date" id="filtroFechaFinal" class="form-control form-control-sm filtro-auto-close"></div>
+            <div class="col-6"><label class="small text-muted">Fecha Creación</label><input type="datetime-local" id="filtroFechaCreacion" class="form-control form-control-sm filtro-auto-close"></div>
+          </div>
+        </div>
+    
+        <!-- Pestaña Identificación -->
+        <div class="tab-pane fade" id="filtroIdentificacion">
+          <h6 class="text-muted text-center small fw-bold mb-2">Identificación</h6>
+          <div class="row g-2">
+            <div class="col-6"><input type="text" id="filtroNumeroOrden" class="form-control form-control-sm filtro-auto-close" placeholder="N° Orden"></div>
+            <div class="col-6"><input type="text" id="filtroCodigo" class="form-control form-control-sm filtro-auto-close" placeholder="Código"></div>
+            <div class="col-6"><input type="text" id="filtroUnidadDocumental" class="form-control form-control-sm filtro-auto-close" placeholder="Unidad Doc."></div>
+            <div class="col-6"><input type="text" id="filtroIdentificadorDoc" class="form-control form-control-sm filtro-auto-close" placeholder="ID Doc."></div>
+          </div>
+        </div>
+    
+        <!-- Pestaña Ubicación -->
+        <div class="tab-pane fade" id="filtroUbicacion">
+          <h6 class="text-muted text-center small fw-bold mb-2">Ubicación</h6>
+          <div class="row g-2">
+            <div class="col-6"><input type="text" id="filtroCaja" class="form-control form-control-sm filtro-auto-close" placeholder="Caja"></div>
+            <div class="col-6"><input type="text" id="filtroCarpeta" class="form-control form-control-sm filtro-auto-close" placeholder="Carpeta"></div>
+            <div class="col-6"><input type="text" id="filtroTomoLegajo" class="form-control form-control-sm filtro-auto-close" placeholder="Tomo/Legajo"></div>
+            <div class="col-6"><input type="text" id="filtroUbicacion" class="form-control form-control-sm filtro-auto-close" placeholder="Ubicación"></div>
+          </div>
+        </div>
+    
+        <!-- Pestaña Soportes -->
+        <div class="tab-pane fade" id="filtroSoportes">
+          <h6 class="text-muted text-center small fw-bold mb-2">Soportes</h6>
+          <div class="row g-2">
+            <div class="col-6">
+              <select id="filtroSoporteFisico" class="form-select form-select-sm filtro-auto-close">
+                <option value="">Sop. Físico</option>
+                <option value="✔">✔</option>
+                <option value="✖">✖</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <select id="filtroSoporteElectronico" class="form-select form-select-sm filtro-auto-close">
+                <option value="">Sop. Electrónico</option>
+                <option value="✔">✔</option>
+                <option value="✖">✖</option>
+              </select>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Pestaña Estado -->
+        <div class="tab-pane fade" id="filtroEstado">
+          <h6 class="text-muted text-center small fw-bold mb-2">Estado</h6>
+          <div class="row g-2">
+            <div class="col-6">
+              <select id="filtroEstadoArchivo" class="form-select form-select-sm filtro-auto-close">
+                <option value="">Estado</option>
+                <option value="✔">✔</option>
+                <option value="✖">✖</option>
+              </select>
+            </div>
+            <div class="col-6"><input type="text" id="filtroCreadoPor" class="form-control form-control-sm filtro-auto-close" placeholder="Creado Por"></div>
+          </div>
+        </div>
+    
+      </div>
+    
+      <!-- Botones de acción -->
+      <div class="d-flex justify-content-center mt-2">
+        <button id="btnBuscar" class="btn btn-primary btn-sm me-2">
+          <i class="bi bi-search"></i> Buscar
+        </button>
+        <button id="btnLimpiar" class="btn btn-secondary btn-sm">
+          <i class="bi bi-x-circle"></i> Limpiar
+        </button>
+      </div>
+    </div>
+    
+    
+
+    <!--
+      ===================================================================================
+      TABLA DE REGISTROS
+      ===================================================================================
+      Se presenta dentro de un contenedor estilizado (table-container).
+      La tabla está configurada con:
+        - DataTables (serverSide y processing a través de AJAX).
+        - colReorder: true (para permitir reordenar columnas).
+        - Columnas con data-label para la versión responsiva en pantallas muy pequeñas.
+    -->
+        <!--  -->
+    <!-- <div class="table-container">
+      <div class="d-flex gap-2 mb-3">
+        <button id="ordenarCodigo" class="btn btn-sm btn-outline-primary" data-order="asc">
+          <i class="bi bi-sort-alpha-down"></i> Ordenar por Código
+        </button>
+        <button id="ordenarFecha" class="btn btn-sm btn-outline-primary" data-order="asc">
+          <i class="bi bi-sort-numeric-down"></i> Ordenar por Fecha
+        </button>
+      </div> -->
+
+      <!-- estado libre -->
+      <div class="text-end mb-2">
+        <a href="{% url 'agregar_registro_a_fuid' fuid.id %}" class="btn btn-sm btn-primary">
+          <i class="bi bi-plus-circle"></i> Agregar Registro
+        </a>
+      </div>
+      <h2 class="section-title">Listado de Registros</h2>
+      <div class="table-responsive">
+        <table id="tablaFUID" class="table table-striped table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <!--
+                Cada th corresponde a una columna, y su contenido textual
+                sirve para la versión de desktop. Para la versión móvil,
+                utilizaremos data-label en los td del tbody que generará DataTables.
+              -->
+              <th style="min-width: 70px;">N° Orden</th>
+              <th style="min-width: 70px;">Código</th>
+              <th style="min-width: 130px;">Serie</th>
+              <th style="min-width: 130px;">Subserie</th>
+              <th style="min-width: 100px;">Unidad Doc</th>
+              <th style="min-width: 130px;">Identificador Doc</th>
+              <th style="min-width: 90px;">F. Inicial</th>
+              <th style="min-width: 90px;">F. Final</th>
+              <th style="min-width: 80px;">Sop. Físico</th>
+              <th style="min-width: 90px;">Sop. Electrónico</th>
+              <th style="min-width: 70px; cursor: pointer;" data-campo="caja">Caja</th>
+              <th style="min-width: 70px;">Carpeta</th>
+              <th style="min-width: 110px;">Tomo Legajo</th>
+              <th style="min-width: 80px;">N° Folios</th>
+              <th style="min-width: 70px;">Tipo</th>
+              <th style="min-width: 70px;">Cant.</th>
+              <th style="min-width: 100px;">Ubicación</th>
+              <th style="min-width: 90px;">Cant. Elec.</th>
+              <th style="min-width: 110px;">Tamaño Elec.</th>
+              <th style="min-width: 80px;">Notas</th>
+              <th style="min-width: 90px;">Creado Por</th>
+              <th style="min-width: 110px;">F. Creación</th>
+              <th style="min-width: 90px;">F. de edición</th>
+              <th style="min-width: 60px;">Estado</th>
+              <th style="min-width: 100px;">Documento</th>  <!-- Sin filtro -->
+              <th style="min-width: 100px;">Acciones</th>    <!-- Sin filtro -->
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Contenido generado vía Ajax con DataTables. 
+                 Cada <td> se inyectará dinámicamente, pero 
+                 para la responsividad en móviles, se requiere 
+                 data-label en el render del servidor. EJEMPLO:
+                 <td data-label="N° Orden"> ... </td>
+                 Sin embargo, al ser serverSide, ese markup se maneja 
+                 en la respuesta. Aquí no es imprescindible colocarlo manualmente. -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    
+
+  </main> <!-- Fin de main -->
+
+  <!--
+    ===================================================================================
+    PIE DE PÁGINA
+    ===================================================================================
+  -->
+  <footer>
+    <p>© 2025 Gestión FUID - Todos los derechos reservados.</p>
+  </footer>
+
+  <!--
+    ===================================================================================
+    SCRIPTS
+    ===================================================================================
+    Se incluyen las librerías necesarias en el orden recomendado:
+      1) jQuery
+      2) Bootstrap JavaScript
+      3) DataTables
+      4) DataTables Bootstrap Integration
+      5) colReorder (para permitir reordenar columnas)
+      6) Nuestro script de configuración
+    ===================================================================================
+  -->
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <!-- Bootstrap Bundle (incluye Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- DataTables -->
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  <!-- colReorder para DataTables (reordenar columnas) -->
+  <script src="https://cdn.datatables.net/colreorder/1.5.5/js/dataTables.colReorder.min.js"></script>
+
+<script>
+$(document).ready(function() {
+
+  // 1) Inicializa DataTable con serverSide=true para FILTROS y ORDENAMIENTO EN EL SERVIDOR
+  var table = $('#tablaFUID').DataTable({
+    processing: true,
+    serverSide: true,
+    pageLength: 30,
+    ordering: true,   // <-- Activamos ordenación server-side
+    ajax: {
+      url: "/registros/fuids/{{ fuid.id }}/registros/",
+      type: "GET",
+      data: function(d) {
+        // Filtros (funcionan tal cual en tu vista actual)
+        d.filtro_numero_orden            = $('#filtroNumeroOrden').val();
+        d.filtro_codigo                  = $('#filtroCodigo').val();
+        d.filtro_unidad_documental       = $('#filtroUnidadDocumental').val();
+        d.filtro_identificador_documento = $('#filtroIdentificadorDoc').val();
+        d.filtro_fecha_archivo          = $('#filtroFechaArchivo').val();
+        d.filtro_fecha_inicial          = $('#filtroFechaInicial').val();
+        d.filtro_fecha_final            = $('#filtroFechaFinal').val();
+        d.filtro_soporte_fisico         = $('#filtroSoporteFisico').val();
+        d.filtro_soporte_electronico    = $('#filtroSoporteElectronico').val();
+        d.filtro_caja                   = $('#filtroCaja').val();
+        d.filtro_carpeta                = $('#filtroCarpeta').val();
+        d.filtro_tomo_legajo_libro      = $('#filtroTomoLegajo').val();
+        d.filtro_numero_folios          = $('#filtroNumFolios').val();
+        d.filtro_tipo                   = $('#filtroTipo').val();
+        d.filtro_cantidad               = $('#filtroCant').val();
+        d.filtro_ubicacion              = $('#filtroUbicacion').val();
+        d.filtro_cant_elec              = $('#filtroCantElec').val();
+        d.filtro_tamano_elec            = $('#filtroTamanoElec').val();
+        d.filtro_notas                  = $('#filtroNotas').val();
+        d.filtro_creado_por             = $('#filtroCreadoPor').val();
+        d.filtro_fecha_creacion         = $('#filtroFechaCreacion').val();
+        d.filtro_estado_archivo         = $('#filtroEstadoArchivo').val();
+      }
+    },
+    columns: [
+      { data: "numero_orden",                     width: "70px" },
+      { data: "codigo",                           width: "70px" },
+      { data: "nombre_serie",                     width: "130px" },
+      { data: "nombre_subserie",                  width: "130px" },
+      { data: "unidad_documental",                width: "100px" },
+      { data: "identificador_documento",          width: "130px" },
+      { data: "fecha_inicial",                    width: "90px" },
+      { data: "fecha_final",                      width: "90px" },
+      { data: "soporte_fisico",                   width: "80px" },
+      { data: "soporte_electronico",              width: "90px" },
+      { data: "caja",                             width: "70px" },
+      { data: "carpeta",                          width: "70px" },
+      { data: "tomo_legajo_libro",                width: "110px" },
+      { data: "numero_folios",                    width: "80px" },
+      { data: "tipo",                             width: "70px" },
+      { data: "cantidad",                         width: "70px" },
+      { data: "ubicacion",                        width: "100px" },
+      { data: "cantidad_documentos_electronicos", width: "90px" },
+      { data: "tamano_documentos_electronicos",   width: "110px" },
+      { data: "notas",                            width: "80px" },
+      { data: "creado_por",                       width: "90px" },
+      { data: "fecha_creacion",                   width: "110px" },
+      { data: "fecha_archivo",                    width: "90px" },
+      { data: "Estado_archivo",                   width: "60px" },
+      {
+        data: "documento",
+        orderable: false,
+        searchable: false,
+        width: "100px"
+      },
+      {
+        data: "acciones",
+        orderable: false,
+        searchable: false,
+        width: "100px"
+      }
+    ],
+    language: {
+      url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+    }
+  });
+
+
+  // 2) Al hacer clic en "Buscar", recargamos la tabla del servidor con los nuevos filtros
+  $('#btnBuscar').on('click', function(){
+    table.ajax.reload(); 
+  });
+
+  // 3) Al hacer clic en "Limpiar", limpia los campos de filtro y recarga la tabla
+  $('#btnLimpiar').on('click', function(){
+    $('input[type="text"], input[type="date"], input[type="datetime-local"]').val('');
+    $('select').val('');
+    table.ajax.reload();
+  });
+
+});
+</script>
+
+    
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const btnToggle = document.getElementById("toggleFiltros");
+    const contenedorFiltros = document.getElementById("contenedorFiltros");
+    const toggleButtons = document.querySelectorAll(".filtro-toggle");
+    const autoCloseInputs = document.querySelectorAll(".filtro-auto-close");
+
+    // Mostrar/Ocultar el panel de filtros principal
+    btnToggle.addEventListener("click", function() {
+      if (contenedorFiltros.style.display === "none") {
+        contenedorFiltros.style.display = "block";
+        btnToggle.innerHTML = '<i class="bi bi-x-circle"></i> Ocultar Filtros';
+      } else {
+        contenedorFiltros.style.display = "none";
+        btnToggle.innerHTML = '<i class="bi bi-funnel"></i> Mostrar Filtros';
+      }
+    });
+
+    // Manejo de subcategorías colapsables
+    toggleButtons.forEach(btn => {
+      btn.addEventListener("click", function() {
+        let target = document.getElementById(btn.dataset.target);
+        if (target.style.display === "none" || target.style.display === "") {
+          target.style.display = "block";
+        } else {
+          target.style.display = "none";
+        }
+      });
+    });
+
+    // Auto-retraer filtros al seleccionar un valor
+    autoCloseInputs.forEach(input => {
+      input.addEventListener("change", function() {
+        let parentGroup = input.closest(".filtro-content");
+        if (parentGroup) {
+          parentGroup.style.display = "none";
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Fichas de Pacientes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>.dataTables_filter {
+        display: none;
+    }
+    </style>
+</head>
+
+<body>
+    
+<main>
+    <nav class="navbar navbar-light bg-light mb-4 animate__animated animate__fadeInDown animate__delay-1s">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-archive-fill text-primary me-2" style="font-size:1.5rem;"></i>
+                Hospital del Sarare
+            </a>
+            <span class="navbar-text">
+                {% if request.user.is_authenticated %}
+                    Bienvenido, {{ request.user.username }} | <a href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+
+
+<div class="container animate__animated animate__fadeInUp" id="mainContainer">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="animate__animated animate__fadeInDown">Lista de Fichas de Pacientes</h1>
+        <a href="{% url 'crear_ficha' %}" class="btn btn-primary animate__animated animate__fadeInDown animate__delay-1s">
+            <i class="bi bi-folder-plus"></i> Crear Ficha
+        </a>
+    </div>
+
+    <!-- Filtros adicionales -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <input type="date" id="fecha_inicio" class="form-control" placeholder="Fecha inicio">
+        </div>
+        <div class="col-md-2">
+            <input type="date" id="fecha_fin" class="form-control" placeholder="Fecha fin">
+        </div>
+        <div class="col-md-2">
+            <input type="text" id="filtro_identificacion" class="form-control" placeholder="Número de Identificación">
+        </div>
+        <div class="col-md-2">
+            <input type="text" id="filtro_historia" class="form-control" placeholder="Número Historia Clínica">
+        </div>
+        <div class="col-md-2">
+            <input type="text" id="filtro_nombre" class="form-control" placeholder="Nombre (exacto)">
+        </div>
+        <div class="col-md-2">
+            <input type="text" id="filtro_similar" class="form-control" placeholder="Búsqueda por similitud">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <button id="filtrar" class="btn btn-primary">Filtrar</button>
+            <button id="limpiar" class="btn btn-secondary">Limpiar Filtros</button>
+        </div>
+    </div>
+    
+    <table class="table table-striped table-bordered animate__animated animate__fadeInUp animate__delay-1s" id="fichasTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th class="col-nombre-completo">Nombre Completo</th>
+                <th>Tipo de Documento</th>
+                <th>Número de Identificación</th>
+                <th>Sexo</th>
+                <th>Estado</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Número Historia Clínica</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <!-- <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Tipo de Documento</th>
+                <th>Número de Identificación</th>
+                <th>Sexo</th>
+                <th>Estado</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Número Historia Clínica</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot> -->
+        <tbody>
+            {% for ficha in fichas %}
+            <tr>
+                <td>{{ ficha.consecutivo }}</td>
+                <td>{{ ficha.primer_nombre }} {{ ficha.segundo_nombre }} {{ ficha.primer_apellido }} {{ ficha.segundo_apellido }}</td>
+                <td>{{ ficha.tipo_identificacion }}</td>
+                <td>{{ ficha.num_identificacion }}</td>
+                <td>{{ ficha.sexo }}</td>
+                <td class="{% if ficha.activo %}estado-activo{% else %}estado-pasivo{% endif %}">
+                    {% if ficha.activo %}Activo{% else %}Pasivo{% endif %}
+                </td>
+                <td>{{ ficha.fecha_nacimiento|date:"Y-m-d" }}</td>
+                <td>{{ ficha.Numero_historia_clinica }}</td>
+                <td>
+                    <a href="{% url 'editar_ficha' ficha.consecutivo %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </a>
+                    <a href="{% url 'detalle_ficha' ficha.consecutivo %}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i> Ver
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center">No hay fichas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+</main>
+<footer>
+    <p>&copy; {{ current_year }} Hospital del Sarare - Central de Archivos del Sarare.</p>
+</footer>
+
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"></script>
+<script>
+$(document).ready(function() {
+    var table = $('#fichasTable').DataTable({
+        pageLength: 250,
+        lengthMenu: [10, 50, 100, 250],
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{% url 'api_lista_fichas' %}",
+            type: "GET",
+            data: function(d) {
+                // Agregar filtros adicionales
+                d.fecha_inicio = $('#fecha_inicio').val();
+                d.fecha_fin = $('#fecha_fin').val();
+                d.filtro_identificacion = $('#filtro_identificacion').val();
+                d.filtro_historia = $('#filtro_historia').val();
+                d.filtro_nombre = $('#filtro_nombre').val();
+                d.filtro_similar = $('#filtro_similar').val();
+            }
+        },
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        columns: [
+            { data: "consecutivo" },
+            { data: "nombre_completo" },
+            { data: "tipo_identificacion" },
+            { data: "num_identificacion" },
+            { data: "sexo" },
+            {
+                data: "estado",
+                render: function(data) {
+                    return data ? '<span class="estado-activo">Activo</span>' : '<span class="estado-pasivo">Pasivo</span>';
+                }
+            },
+            { data: "fecha_nacimiento" },
+            { data: "numero_historia_clinica" },
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: function(data) {
+                    return `
+                        <a href="/editar-ficha/${data.consecutivo}" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a href="/detalle-ficha/${data.consecutivo}" class="btn btn-info btn-sm">
+                            <i class="bi bi-eye"></i> Ver
+                        </a>
+                    `;
+                }
+            }
+        ],
+        initComplete: function() {
+            // Manejo del botón "Filtrar"
+            $('#filtrar').on('click', function() {
+                table.ajax.reload();
+            });
+        }
+    });
+            // Botón "Limpiar Filtros"
+    $('#limpiar').on('click', function() {
+        // Restablecer los valores de los filtros
+        $('#fecha_inicio').val('');
+        $('#fecha_fin').val('');
+        $('#filtro_identificacion').val('');
+        $('#filtro_historia').val('');
+        $('#filtro_nombre').val('');
+        $('#filtro_similar').val('');
+        
+        // Recargar la tabla
+        table.ajax.reload();
+    });
+
+    // Animación para las filas de la tabla al redibujar
+    $('#fichasTable').on('draw.dt', function() {
+        anime({
+            targets: '#fichasTable tbody tr',
+            translateX: [-10, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 500,
+            delay: anime.stagger(50)
+        });
+    });
+});
+
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        anime({
+            targets: '#mainContainer',
+            opacity: [0,1],
+            duration: 800,
+            easing: 'easeOutExpo'
+        });
+        anime({
+            targets: '#fichasTable tbody tr',
+            opacity: [0,1],
+            translateY: [20,0],
+            duration: 500,
+            delay: anime.stagger(100),
+            easing: 'easeOutExpo'
+        });
+        anime({
+            targets: 'nav.navbar',
+            opacity: [0,1],
+            duration: 500,
+            easing: 'easeOutExpo'
+        });
+    });
+</script>
+</body>
+</html>

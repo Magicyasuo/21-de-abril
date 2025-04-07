@@ -1,0 +1,223 @@
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // =====================================================================
+      // 1) REFERENCIAS A LOS ELEMENTOS DE LA PÁGINA
+      // =====================================================================
+      const registrosAsociados = document.getElementById('registros-asociados');
+      const registrosDisponibles = document.getElementById('registros-disponibles');
+    
+      const btnSelectAllAsociados   = document.getElementById('selectAllAsociados');
+      const btnSelectAllDisponibles = document.getElementById('selectAllDisponibles');
+    
+      const searchAsociados    = document.getElementById('searchAsociados');
+      const searchDisponibles  = document.getElementById('searchDisponibles');
+    
+      const prevAsociados      = document.getElementById('prevAsociados');
+      const nextAsociados      = document.getElementById('nextAsociados');
+      const prevDisponibles    = document.getElementById('prevDisponibles');
+      const nextDisponibles    = document.getElementById('nextDisponibles');
+    
+      const infoAsociados      = document.getElementById('infoAsociados');
+      const infoDisponibles    = document.getElementById('infoDisponibles');
+    
+      // Form principal (para inyectar inputs ocultos y enviar los registros asociados)
+      const form = document.querySelector('form');
+    
+      // =====================================================================
+      // 2) CONFIGURACIÓN DE PAGINACIÓN Y ESTADOS
+      // =====================================================================
+      const pageSize = 50;           // Mostramos 50 registros por página
+      let currentPageAsociados = 1;  // Página actual para 'Registros Asociados'
+      let currentPageDisponibles = 1; // Página actual para 'Registros Disponibles'
+    
+      // =====================================================================
+      // 3) FUNCIONES AUXILIARES
+      // =====================================================================
+    
+      // Devuelve todas las filas <tr> de un <tbody> (incluyendo las ocultas).
+      function getAllRows(tableBody) {
+        return Array.from(tableBody.querySelectorAll('tr'));
+      }
+    
+      // Renderiza la tabla respetando la paginación
+      // - Muestra sólo las filas visibles (row.style.display !== 'none') en la página actual
+      // - Actualiza el texto de "Página X/Y"
+      function renderTable(tableBody, currentPage, infoLabel) {
+        // Solo filas que no estén ocultas por el filtro
+        const rows = getAllRows(tableBody).filter(row => row.style.display !== 'none');
+    
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+    
+        // Calcular el rango de filas que se mostrarán
+        const start = (currentPage - 1) * pageSize;
+        const end   = start + pageSize;
+    
+        rows.forEach((row, index) => {
+          row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+    
+        // Actualizar la etiqueta de páginas (p.ej. "Página 1/5 - Mostrando 50 de 234")
+        if (infoLabel) {
+          infoLabel.innerText = `Página ${currentPage}/${totalPages} - Mostrando ${Math.min(pageSize, totalRows - start)} de ${totalRows}`;
+        }
+    
+        return currentPage;
+      }
+    
+      // Filtra las filas sólo cuando el usuario presiona Enter dentro del campo de búsqueda
+      // - Ocultamos filas que no coincidan
+      // - Reseteamos paginación a la página 1
+      function filterTableOnEnter(event, tableBody, searchInput, currentPageVar, infoLabel) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+    
+          const filterValue = searchInput.value.toLowerCase();
+          // Mostrar/ocultar filas según el texto
+          getAllRows(tableBody).forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            row.style.display = rowText.includes(filterValue) ? '' : 'none';
+          });
+    
+          // Volver a la primera página luego de filtrar
+          currentPageVar = renderTable(tableBody, 1, infoLabel);
+        }
+      }
+    
+      // Mueve una fila <tr> de una tabla a otra
+      // (cuando se marca o desmarca un checkbox)
+      function moveRow(checkbox, fromTable, toTable) {
+        const row          = checkbox.closest("tr");
+        const clonedRow    = row.cloneNode(true);
+        const clonedCheckbox = clonedRow.querySelector('.registro-checkbox');
+    
+        // Quitar la fila original de su tabla
+        row.parentNode.removeChild(row);
+    
+        // Volver a escuchar cambios en el checkbox clonado
+        attachCheckboxListener(clonedCheckbox);
+    
+        // Insertar la fila clonada en la tabla destino
+        toTable.appendChild(clonedRow);
+    
+        // Actualizar la paginación de ambas tablas
+        renderTable(registrosAsociados, currentPageAsociados, infoAsociados);
+        renderTable(registrosDisponibles, currentPageDisponibles, infoDisponibles);
+      }
+    
+      // Asigna el listener de cambio a un checkbox
+      // - Si se marca, se mueve a "Registros Asociados"
+      // - Si se desmarca, se mueve a "Registros Disponibles"
+      function attachCheckboxListener(checkbox) {
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) {
+            moveRow(checkbox, registrosDisponibles, registrosAsociados);
+          } else {
+            moveRow(checkbox, registrosAsociados, registrosDisponibles);
+          }
+        });
+      }
+    
+      // "Seleccionar todos" (marca todos los checkboxes de una tabla y los mueve a otra)
+      function toggleSelectAll(tableBody, moveToTable) {
+        // NOTA: Esto mueve TODOS los registros de 'tableBody' a 'moveToTable'
+        //       Podrías limitar a las filas visibles si lo prefieres
+        getAllRows(tableBody).forEach(row => {
+          const checkbox = row.querySelector('.registro-checkbox');
+          if (checkbox) {
+            checkbox.checked = true;
+            moveRow(checkbox, tableBody, moveToTable);
+          }
+        });
+      }
+    
+      // =====================================================================
+      // 4) BLOQUEAR ENTER EN LOS FILTROS Y USAR filterTableOnEnter
+      // =====================================================================
+      searchAsociados.addEventListener('keydown',
+        (event) => filterTableOnEnter(event, registrosAsociados, searchAsociados, currentPageAsociados, infoAsociados));
+    
+      searchDisponibles.addEventListener('keydown',
+        (event) => filterTableOnEnter(event, registrosDisponibles, searchDisponibles, currentPageDisponibles, infoDisponibles));
+    
+      // =====================================================================
+      // 5) BOTONES: "SELECCIONAR TODOS"
+      // =====================================================================
+      // Mueve todos los registros de "disponibles" a "asociados"
+      btnSelectAllAsociados.addEventListener('click', (event) => {
+        event.preventDefault();
+        toggleSelectAll(registrosDisponibles, registrosAsociados);
+      });
+    
+      // Mueve todos los registros de "asociados" a "disponibles"
+      btnSelectAllDisponibles.addEventListener('click', (event) => {
+        event.preventDefault();
+        toggleSelectAll(registrosAsociados, registrosDisponibles);
+      });
+    
+      // =====================================================================
+      // 6) EVENTOS DE PAGINACIÓN
+      // =====================================================================
+      // Paginación "Asociados"
+      prevAsociados.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (currentPageAsociados > 1) {
+          currentPageAsociados--;
+          renderTable(registrosAsociados, currentPageAsociados, infoAsociados);
+        }
+      });
+    
+      nextAsociados.addEventListener('click', (event) => {
+        event.preventDefault();
+        currentPageAsociados++;
+        renderTable(registrosAsociados, currentPageAsociados, infoAsociados);
+      });
+    
+      // Paginación "Disponibles"
+      prevDisponibles.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (currentPageDisponibles > 1) {
+          currentPageDisponibles--;
+          renderTable(registrosDisponibles, currentPageDisponibles, infoDisponibles);
+        }
+      });
+    
+      nextDisponibles.addEventListener('click', (event) => {
+        event.preventDefault();
+        currentPageDisponibles++;
+        renderTable(registrosDisponibles, currentPageDisponibles, infoDisponibles);
+      });
+    
+      // =====================================================================
+      // 7) AL ENVIAR EL FORM, CREAR INPUTS OCULTOS CON LOS REGISTROS ASOCIADOS
+      // =====================================================================
+      form.addEventListener('submit', (event) => {
+        const inputContainer = document.createElement('div');
+        inputContainer.style.display = 'none';
+    
+        // Sólo los checkboxes marcados en 'registros-asociados'
+        registrosAsociados.querySelectorAll('.registro-checkbox:checked').forEach(checkbox => {
+          const input = document.createElement('input');
+          input.type  = 'hidden';
+          input.name  = 'registros';   // Django leerá esto como un array si lo maneja como MultipleChoice
+          input.value = checkbox.value;
+          inputContainer.appendChild(input);
+        });
+    
+        form.appendChild(inputContainer);
+      });
+    
+      // =====================================================================
+      // 8) INICIALIZACIÓN
+      // =====================================================================
+      // A) Asignar listener a cada checkbox que ya existe
+      document.querySelectorAll('.registro-checkbox').forEach(attachCheckboxListener);
+    
+      // B) Renderizar la paginación inicial en ambas tablas
+      renderTable(registrosAsociados, currentPageAsociados, infoAsociados);
+      renderTable(registrosDisponibles, currentPageDisponibles, infoDisponibles);
+    
+    });
+    </script>
+    
