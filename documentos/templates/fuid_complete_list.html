@@ -445,6 +445,8 @@ th[data-order="desc"]::after {
           <div class="row g-2">
             <div class="col-6"><input type="text" id="filtroNumeroOrden" class="form-control form-control-sm filtro-auto-close" placeholder="N° Orden"></div>
             <div class="col-6"><input type="text" id="filtroCodigo" class="form-control form-control-sm filtro-auto-close" placeholder="Código"></div>
+            <div class="col-6"><input type="text" id="filtroSerie" class="form-control form-control-sm filtro-auto-close" placeholder="Serie"></div>
+            <div class="col-6"><input type="text" id="filtroSubserie" class="form-control form-control-sm filtro-auto-close" placeholder="Subserie"></div>
             <div class="col-6"><input type="text" id="filtroUnidadDocumental" class="form-control form-control-sm filtro-auto-close" placeholder="Unidad Doc."></div>
             <div class="col-6"><input type="text" id="filtroIdentificadorDoc" class="form-control form-control-sm filtro-auto-close" placeholder="ID Doc."></div>
           </div>
@@ -642,6 +644,8 @@ $(document).ready(function() {
         // Filtros (funcionan tal cual en tu vista actual)
         d.filtro_numero_orden            = $('#filtroNumeroOrden').val();
         d.filtro_codigo                  = $('#filtroCodigo').val();
+        d.filtro_serie                   = $('#filtroSerie').val();
+        d.filtro_subserie                = $('#filtroSubserie').val();
         d.filtro_unidad_documental       = $('#filtroUnidadDocumental').val();
         d.filtro_identificador_documento = $('#filtroIdentificadorDoc').val();
         d.filtro_fecha_archivo          = $('#filtroFechaArchivo').val();

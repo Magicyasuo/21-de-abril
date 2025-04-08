@@ -9,7 +9,22 @@
     .hidden {
         display: none;
     }
+    /* Estilo form-section-title eliminado */
 </style>
+<style>
+    #toggleCamposOpcionales.form-check-input {
+        border: 2px solid #000 !important;  /* Borde negro más visible */
+        background-color: #fff;
+    }
+
+    #toggleCamposOpcionales.form-check-input:checked {
+        background-color: #0d6efd;  /* azul Bootstrap cuando está activo */
+        border-color: #000;
+    }
+</style>
+
+
+
 
 <a href="{% url 'detalle_fuid' fuid.id %}" class="btn btn-secondary mb-3">
     <i class="bi bi-arrow-left"></i> Volver al FUID
@@ -27,22 +42,18 @@
 {% endif %}
 
 <div class="container py-4">
-    <h1>Agregar Registro al FUID #{{ fuid.id }}</h1>
+    <h1>Agregar Registro al FUID #{{ fuid.id }}</h1> <!-- Título restaurado -->
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.errors }}
 
-        <!-- Campo Número de Orden -->
+        <!-- Título de sección eliminado -->
+        
+        <!-- Campo Código -->
         <div class="mb-3">
-            <label for="{{ form.numero_orden.id_for_label }}" class="form-label">Número de Orden</label>
-            {{ form.numero_orden|add_class:"form-control" }}
+            <label for="{{ form.codigo.id_for_label }}" class="form-label">Código</label>
+            {{ form.codigo|add_class:"form-control" }}
         </div>
-
-                <!-- Campo Código -->
-                <div class="mb-3">
-                    <label for="{{ form.codigo.id_for_label }}" class="form-label">Código</label>
-                    {{ form.codigo|add_class:"form-control" }}
-                </div>
 
         <!-- Campo Serie -->
         <div class="mb-3">
@@ -62,19 +73,7 @@
         <div class="mb-3">
             <label for="{{ form.unidad_documental.id_for_label }}" class="form-label">Unidad Documental</label>
             {{ form.unidad_documental|add_class:"form-control" }}
-          </div>
-
-        <!-- Campo Identificador Documental con Tooltip -->
-        <div class="mb-3">
-            <label for="{{ form.identificador_documento.id_for_label }}" class="form-label">
-                Identificador documental 
-                <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
-                title="Solo diligencie este campo si se trata de una Historia Clínica u otro documento que lo requiera."></i>
-            </label>
-            {{ form.identificador_documento|add_class:"form-control" }}
         </div>
-  
-          
 
         <!-- Campo Fecha Inicial -->
         <div class="mb-3">
@@ -88,15 +87,39 @@
             {{ form.fecha_final|add_class:"form-control" }}
         </div>
 
-        <!-- Checkboxes de Soporte -->
-        <div class="form-check form-switch mb-3">
+        <!-- === SECCIÓN MOVIDA AQUÍ === -->
+        <!-- Checkboxes de Soporte (Verticalmente) -->
+        <div class="form-check mb-3 mt-4"> <!-- Añadido margen superior -->
             {{ form.soporte_fisico }}
             <label class="form-check-label" for="{{ form.soporte_fisico.id_for_label }}">Soporte Físico</label>
         </div>
-
-        <div class="form-check form-switch mb-3">
+        <div class="form-check mb-3">
             {{ form.soporte_electronico }}
             <label class="form-check-label" for="{{ form.soporte_electronico.id_for_label }}">Soporte Electrónico</label>
+        </div>
+        <div class="form-check form-switch mb-3 custom-switch">
+            <input class="form-check-input" type="checkbox" id="toggleCamposOpcionales">
+            <label class="form-check-label" for="toggleCamposOpcionales">
+                Diligenciar esta sección solo en caso de historias clínicas o historias laborales.
+
+            </label>
+        </div>
+
+        <!-- Contenedor para campos opcionales -->
+        <div id="camposOpcionales" class="border p-3 mb-3 rounded shadow-sm hidden">
+             <h6 class="mb-3 text-secondary"><i class="bi bi-person-badge"></i> Detalles Específicos</h6>
+             <div class="mb-3">
+                <label for="{{ form.identificador_documento.id_for_label }}" class="form-label">
+                    Identificador documental 
+                    <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Solo diligencie este campo si se trata de una Historia Clínica u otro documento que lo requiera."></i>
+                </label>
+                {{ form.identificador_documento|add_class:"form-control" }}
+            </div>
+            <div class="mb-3 form-check">
+                {{ form.Estado_archivo }}
+                <label class="form-check-label" for="{{ form.Estado_archivo.id_for_label }}">Registro vigente</label>
+            </div>
         </div>
 
         <!-- Campos relacionados con Soporte Físico -->
@@ -118,7 +141,7 @@
                     <option value="Legajo">Legajo</option>
                     <option value="Libro">Libro</option>
                 </select>
-                <input type="hidden" id="hidden_tomo_legajo_libro" name="{{ form.tomo_legajo_libro.html_name }}" value="{{ form.tomo_legajo_libro.value }}">
+                <input type="hidden" id="hidden_tomo_legajo_libro" name="{{ form.tomo_legajo_libro.html_name }}" value="{{ form.tomo_legajo_libro.value|default_if_none:'' }}">
             </div>
             <div class="mb-3">
                 <label for="{{ form.numero_folios.id_for_label }}" class="form-label">Número de Folios</label>
@@ -136,7 +159,7 @@
 
         <!-- Campos relacionados con Soporte Electrónico -->
         <div id="soporteElectronicoFields" class="border p-3 mb-3 hidden">
-            <h5 class="mb-3">Datos de Soporte Electrónico</h5>
+            <h5 class="mb-3">Datos de Soporte Electrónico</h5> 
             <div class="mb-3">
                 <label for="{{ form.ubicacion.id_for_label }}" class="form-label">Ubicación</label>
                 {{ form.ubicacion|add_class:"form-control" }}
@@ -146,27 +169,34 @@
                 {{ form.cantidad_documentos_electronicos|add_class:"form-control" }}
             </div>
             <div class="mb-3">
-                <label for="{{ form.tamano_documentos_electronicos.id_for_label }}" class="form-label">Tamaño de los Documentos Electrónicos</label>
-                {{ form.tamano_documentos_electronicos|add_class:"form-control" }}
+                <label class="form-label">Tamaño del Documento</label>
+                <div class="input-group">
+                    <input type="number" id="tamano_valor" class="form-control" placeholder="Valor" min="0" step="any">
+                    <select id="tamano_unidad" class="form-select" style="max-width: 100px;">
+                        <option value="KB">KB</option>
+                        <option value="MB" selected>MB</option> 
+                        <option value="GB">GB</option>
+                    </select>
+                </div>
+                {{ form.tamano_documentos_electronicos }}
             </div>
-                    <!-- Nuevo campo para adjuntar documento -->
+            <div class="mb-3">
+                <label for="{{ form.archivo.id_for_label }}" class="form-label">Adjuntar Documento</label>
+                {{ form.archivo|add_class:"form-control" }}
+                <small class="form-text text-muted">El archivo no debe superar los 10 MB.</small>
+            </div>
+        </div>
+        <!-- === FIN SECCIÓN MOVIDA === -->
+
+        <!-- Campo Notas (restaurado a su posible posición original) -->
         <div class="mb-3">
-            <label for="{{ form.archivo.id_for_label }}" class="form-label">Adjuntar Documento</label>
-            {{ form.archivo|add_class:"form-control" }}
-            <small class="form-text text-muted">El archivo no debe superar los 10 MB.</small>
-        </div>
+            <label for="{{ form.notas.id_for_label }}" class="form-label">Notas</label>
+            {{ form.notas|add_class:"form-control" }}
         </div>
 
-        <!-- Campo Estado de Archivo -->
-        <div class="mb-3 form-check">
-            {{ form.Estado_archivo }}
-            <label class="form-check-label" for="{{ form.Estado_archivo.id_for_label }}">Registro vigente</label>
-        </div>
-
-
-
-        <!-- Botón de envío -->
+        <!-- Botón de envío (restaurado a disposición original) -->
         <button type="submit" class="btn btn-primary">Guardar Registro</button>
+
     </form>
 </div>
 
@@ -184,10 +214,15 @@
         const loader = document.getElementById('loaderOverlay');
     
         form.addEventListener('submit', function () {
-            loader.style.display = 'flex'; // Mostrar pantalla de carga
+            // Validar si se requiere un archivo antes de mostrar loader
+            const soporteElectronicoCheckbox = document.getElementById('{{ form.soporte_electronico.id_for_label }}');
+            const archivoInput = document.getElementById('{{ form.archivo.id_for_label }}');
+            if (soporteElectronicoCheckbox.checked && archivoInput.files.length > 0) {
+                 loader.style.display = 'flex'; // Mostrar pantalla de carga SOLO si se sube archivo
+            }
         });
     });
-    </script>
+</script>
     
 
 <script>
@@ -199,110 +234,207 @@ document.addEventListener('DOMContentLoaded', function() {
     const soporteElectronicoFields = document.getElementById('soporteElectronicoFields');
     const serieSelect = document.getElementById('{{ form.codigo_serie.id_for_label }}');
     const subserieSelect = document.getElementById('{{ form.codigo_subserie.id_for_label }}');
+    // Añadir referencias para los nuevos elementos
+    const toggleOpcionalesCheckbox = document.getElementById('toggleCamposOpcionales');
+    const camposOpcionalesDiv = document.getElementById('camposOpcionales');
 
     // Alternar visibilidad y estado de habilitación de campos de soporte
     function toggleFields() {
-        if (soporteFisicoCheckbox.checked) {
-            soporteFisicoFields.classList.remove('hidden');
-            soporteFisicoFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
-        } else {
-            soporteFisicoFields.classList.add('hidden');
-            soporteFisicoFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
-        }
-        if (soporteElectronicoCheckbox.checked) {
-            soporteElectronicoFields.classList.remove('hidden');
-            soporteElectronicoFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
-        } else {
-            soporteElectronicoFields.classList.add('hidden');
-            soporteElectronicoFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+        const fisicosActivos = soporteFisicoCheckbox.checked;
+        soporteFisicoFields.classList.toggle('hidden', !fisicosActivos);
+        soporteFisicoFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = !fisicosActivos);
+
+        const electronicosActivos = soporteElectronicoCheckbox.checked;
+        soporteElectronicoFields.classList.toggle('hidden', !electronicosActivos);
+        soporteElectronicoFields.querySelectorAll('input, select, textarea').forEach(el => el.disabled = !electronicosActivos);
+        // El campo archivo debe estar siempre habilitado si la sección es visible
+         if (electronicosActivos) {
+             document.getElementById('{{ form.archivo.id_for_label }}').disabled = false;
         }
     }
-    toggleFields();
+
+    // --- NUEVA FUNCIÓN PARA CAMPOS OPCIONALES ---
+    function toggleCamposOpcionales() {
+        const opcionalesActivos = toggleOpcionalesCheckbox.checked;
+        camposOpcionalesDiv.classList.toggle('hidden', !opcionalesActivos);
+        // Opcional: deshabilitar inputs internos si están ocultos
+        camposOpcionalesDiv.querySelectorAll('input, select, textarea').forEach(el => el.disabled = !opcionalesActivos);
+    }
+    // --- FIN NUEVA FUNCIÓN ---
+
+    // Ejecutar al cargar la página
+    toggleFields(); 
+    toggleCamposOpcionales(); // Llamar también para el estado inicial
+
+    // Event listeners
     soporteFisicoCheckbox.addEventListener('change', toggleFields);
     soporteElectronicoCheckbox.addEventListener('change', toggleFields);
+    toggleOpcionalesCheckbox.addEventListener('change', toggleCamposOpcionales); // Añadir listener
 
     // Función para cargar subseries según la serie seleccionada
     function cargarSubseries(serieId) {
+        if (!serieId) {
+            subserieSelect.innerHTML = '<option value="">Seleccione una serie primero</option>';
+            return;
+        }
         fetch("{% url 'cargar_subseries' %}?serie_id=" + serieId)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                 return response.json();
+            })
             .then(data => {
                 subserieSelect.innerHTML = '<option value="">Seleccione una subserie</option>';
-                data.forEach(subserie => {
-                    const option = document.createElement('option');
-                    option.value = subserie.id;
-                    option.textContent = subserie.nombre;
-                    subserieSelect.appendChild(option);
-                });
+                if (data && data.length > 0) {
+                    data.forEach(subserie => {
+                        const option = document.createElement('option');
+                        option.value = subserie.id;
+                        option.textContent = subserie.nombre;
+                        // Marcar como seleccionada si coincide con valor previo (útil en edición)
+                        if (subserie.id == "{{ form.codigo_subserie.value|default_if_none:'' }}") {
+                            option.selected = true;
+                        }
+                        subserieSelect.appendChild(option);
+                    });
+                } else {
+                     subserieSelect.innerHTML = '<option value="">No hay subseries para esta serie</option>';
+                }
             })
-            .catch(error => console.error('Error cargando subseries:', error));
+            .catch(error => {
+                console.error('Error cargando subseries:', error);
+                subserieSelect.innerHTML = '<option value="">Error al cargar</option>';
+            });
     }
+    // Cargar subseries iniciales si hay una serie preseleccionada (útil en edición)
     if (serieSelect.value) {
         cargarSubseries(serieSelect.value);
     }
     serieSelect.addEventListener('change', function() {
-        const serieId = this.value;
-        if (serieId) {
-            cargarSubseries(serieId);
-        } else {
-            subserieSelect.innerHTML = '<option value="">Seleccione una subserie</option>';
-        }
+        cargarSubseries(this.value);
     });
 });
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const serieSelect = document.getElementById('{{ form.codigo_serie.id_for_label }}');
-        const subserieSelect = document.getElementById('{{ form.codigo_subserie.id_for_label }}');
-        const unidadDocumentalInput = document.getElementById('{{ form.unidad_documental.id_for_label }}');
+    // Script para autocompletar Unidad Documental (si existe en la página)
+    const serieSelectUnidad = document.getElementById('{{ form.codigo_serie.id_for_label }}');
+    const subserieSelectUnidad = document.getElementById('{{ form.codigo_subserie.id_for_label }}');
+    const unidadDocumentalInput = document.getElementById('{{ form.unidad_documental.id_for_label }}');
     
-        // Función para combinar serie y subserie en una sola cadena
+    if (serieSelectUnidad && subserieSelectUnidad && unidadDocumentalInput) {
         function actualizarUnidadDocumental() {
-            const serie = serieSelect.options[serieSelect.selectedIndex]?.text.trim() || "";
-            const subserie = subserieSelect.options[subserieSelect.selectedIndex]?.text.trim() || "";
+            const serieText = serieSelectUnidad.options[serieSelectUnidad.selectedIndex]?.text.trim() || "";
+            const subserieText = subserieSelectUnidad.options[subserieSelectUnidad.selectedIndex]?.text.trim() || "";
+            const serieValue = serieSelectUnidad.value;
+            const subserieValue = subserieSelectUnidad.value;
     
-            // Ejemplo: "Historias Clínicas - Adultos"
-            const nuevaUnidad = subserie ? `${serie} - ${subserie}` : serie;
-    
-            // Solo autocompletamos si el usuario no ha modificado manualmente
-            if (!unidadDocumentalInput.value || unidadDocumentalInput.dataset.autofill === "true") {
-                unidadDocumentalInput.value = nuevaUnidad;
-                unidadDocumentalInput.dataset.autofill = "true"; // Marcamos que es autocompletado
+            // Solo actualizamos si hay una serie seleccionada
+            if (serieValue) {
+                 // Construimos la unidad: "Nombre Serie" o "Nombre Serie - Nombre Subserie"
+                 const nuevaUnidad = (subserieValue && subserieText && subserieText !== "Seleccione una subserie" && subserieText !== "No hay subseries para esta serie" && subserieText !== "Error al cargar") 
+                                   ? `${serieText} - ${subserieText}` 
+                                   : serieText; // Si no hay subserie válida, solo usar el nombre de la serie
+        
+                 // Solo autocompletamos si el usuario no ha modificado manualmente
+                 if (!unidadDocumentalInput.value || unidadDocumentalInput.dataset.autofill === "true") {
+                    unidadDocumentalInput.value = nuevaUnidad;
+                    unidadDocumentalInput.dataset.autofill = "true"; // Marcamos que es autocompletado
+                }
             }
         }
     
-        // Cuando el usuario cambia serie o subserie, actualizamos unidad_documental
-        serieSelect.addEventListener('change', actualizarUnidadDocumental);
-        subserieSelect.addEventListener('change', actualizarUnidadDocumental);
+        // Event listeners
+        serieSelectUnidad.addEventListener('change', actualizarUnidadDocumental);
+        subserieSelectUnidad.addEventListener('change', actualizarUnidadDocumental);
     
-        // Si el usuario escribe a mano en unidad_documental, deshabilitamos el autocompletado
+        // Deshabilitar autocompletado si el usuario escribe
         unidadDocumentalInput.addEventListener('input', function() {
             this.dataset.autofill = "false";
         });
-    });
-    </script>
+        
+        // Ejecutar al inicio por si hay valores precargados
+        actualizarUnidadDocumental();
+    }
+</script>
     
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectField = document.getElementById('tomo_legajo_libro');
-        const hiddenField = document.getElementById('hidden_tomo_legajo_libro');
+    // Script para manejar el select de Tomo/Legajo/Libro
+    const selectTomoLegajo = document.getElementById('tomo_legajo_libro');
+    const hiddenTomoLegajo = document.getElementById('hidden_tomo_legajo_libro');
     
-        // Cuando el usuario selecciona una opción, actualiza el campo oculto
-        selectField.addEventListener('change', function () {
-            hiddenField.value = selectField.value;
+    if (selectTomoLegajo && hiddenTomoLegajo) {
+         // Establecer valor inicial del select si el campo oculto tiene valor
+        if (hiddenTomoLegajo.value) {
+            selectTomoLegajo.value = hiddenTomoLegajo.value;
+        }
+        
+        // Actualizar campo oculto cuando cambia el select
+        selectTomoLegajo.addEventListener('change', function () {
+            hiddenTomoLegajo.value = this.value;
         });
-    });
-    </script>
+    }
+</script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+    // Inicializar tooltips de Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 </script>
 
+<!-- === NUEVO SCRIPT PARA TAMAÑO DE ARCHIVO === -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tamanoValorInput = document.getElementById('tamano_valor');
+    const tamanoUnidadSelect = document.getElementById('tamano_unidad');
+    const tamanoHiddenInput = document.getElementById('{{ form.tamano_documentos_electronicos.id_for_label }}');
+
+    function actualizarCampoOculto() {
+        const valor = tamanoValorInput.value.trim();
+        const unidad = tamanoUnidadSelect.value;
+        if (valor && !isNaN(valor)) {
+            tamanoHiddenInput.value = `${parseFloat(valor)} ${unidad}`;
+        } else {
+            tamanoHiddenInput.value = ''; // Limpiar si no hay valor numérico válido
+        }
+    }
+
+    function parsearYEstablecerValorInicial() {
+        const valorActual = tamanoHiddenInput.value;
+        if (valorActual) {
+            const partes = valorActual.split(' ');
+            if (partes.length === 2) {
+                const valorNumerico = parseFloat(partes[0]);
+                const unidad = partes[1].toUpperCase();
+                if (!isNaN(valorNumerico)) {
+                    tamanoValorInput.value = valorNumerico;
+                    // Seleccionar la unidad correcta en el dropdown
+                    const opcionUnidad = tamanoUnidadSelect.querySelector(`option[value="${unidad}"]`);
+                    if (opcionUnidad) {
+                        tamanoUnidadSelect.value = unidad;
+                    } else { // Si la unidad no es KB/MB/GB, default a MB o dejar vacío?
+                       tamanoUnidadSelect.value = 'MB'; 
+                    }
+                }
+            }
+        } else {
+             // Si no hay valor inicial, podrías poner un default si quieres
+            // tamanoValorInput.value = '';
+            // tamanoUnidadSelect.value = 'MB';
+        }
+    }
+
+    // Event listeners para actualizar el campo oculto cuando cambian los visibles
+    tamanoValorInput.addEventListener('input', actualizarCampoOculto);
+    tamanoUnidadSelect.addEventListener('change', actualizarCampoOculto);
+
+    // Establecer valores iniciales al cargar la página (útil para edición)
+    parsearYEstablecerValorInicial();
+});
+</script>
+<!-- === FIN SCRIPT === -->
 
 {% endblock %}

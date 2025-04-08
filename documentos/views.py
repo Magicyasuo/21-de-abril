@@ -16,7 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin  # Mixin para vistas b
 from django.contrib.auth.models import User  # Modelo de usuarios de Django
 from django.core.paginator import Paginator  # Paginación de listas de objetos
 from django.db import IntegrityError  # Manejo de errores de integridad en la base de datos
-from django.db.models import Q, Count, Avg  # Operadores para consultas avanzadas a la base de datos
+from django.db.models import Q, Count, Avg, Max  # Operadores para consultas avanzadas a la base de datos
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse  # Respuestas HTTP y JSON
 from django.shortcuts import render, redirect, get_object_or_404  # Métodos para renderizar vistas y manejar redirecciones
 from django.urls import reverse_lazy
@@ -227,8 +227,8 @@ def registros_api(request):
     # 3) Total sin filtros (para recordsTotal) — generalmente también queremos
     #    "total sin filtros" solo en la oficina, pero si prefieres
     #    contar todo, deja la línea original. Ojo: usualmente DataTables
-    #    quiere “recordsTotal” = total *después* de filtrar por oficina*,
-    #    y “recordsFiltered” = total *después* de filtrar además por búsqueda*
+    #    quiere "recordsTotal" = total *después* de filtrar por oficina*,
+    #    y "recordsFiltered" = total *después* de filtrar además por búsqueda*
     total_registros = registros.count()
 
     # 4) Paginación
@@ -735,9 +735,12 @@ def registros_fuid_json(request, fuid_id):
 
     registros_query = fuid.registros.all()
 
-    # ==================== Lectura de filtros (SIN CAMBIOS) ====================
+    # ==================== Lectura de filtros (Añadir Serie/Subserie) ====================
     numero_orden = request.GET.get("filtro_numero_orden", "").strip()
     codigo = request.GET.get("filtro_codigo", "").strip()
+    # Añadir lectura de filtros para serie y subserie
+    serie_nombre = request.GET.get("filtro_serie", "").strip()
+    subserie_nombre = request.GET.get("filtro_subserie", "").strip()
     unidad_documental = request.GET.get("filtro_unidad_documental", "").strip()
     identificador_documento = request.GET.get("filtro_identificador_documento", "").strip()
     fecha_archivo = request.GET.get("filtro_fecha_archivo", "").strip()
@@ -759,50 +762,86 @@ def registros_fuid_json(request, fuid_id):
     fecha_creacion = request.GET.get("filtro_fecha_creacion", "").strip()
     estado_archivo = request.GET.get("filtro_estado_archivo", "").strip()
 
-    # ==================== Filtros Q() (SIN CAMBIOS) ====================
+    # ==================== Filtros Q() (Añadir Serie/Subserie) ====================
     q_filter = Q()
+    
     if numero_orden:
-        q_filter &= Q(numero_orden__icontains=numero_orden)
+        q_filter &= Q(numero_orden__icontains=numero_orden) 
+            
     if codigo:
         q_filter &= Q(codigo__icontains=codigo)
+        
+    # Añadir lógica de filtrado para serie y subserie
+    if serie_nombre:
+        q_filter &= Q(codigo_serie__nombre__icontains=serie_nombre)
+        
+    if subserie_nombre:
+        q_filter &= Q(codigo_subserie__nombre__icontains=subserie_nombre)
+
     if unidad_documental:
         q_filter &= Q(unidad_documental__icontains=unidad_documental)
+        
     if identificador_documento:
         q_filter &= Q(identificador_documento__icontains=identificador_documento)
+        
     if fecha_archivo:
         q_filter &= Q(fecha_archivo=fecha_archivo)
+        
     if fecha_inicial:
         q_filter &= Q(fecha_inicial=fecha_inicial)
+        
     if fecha_final:
         q_filter &= Q(fecha_final=fecha_final)
+        
     if soporte_fisico:
         q_filter &= Q(soporte_fisico=(soporte_fisico == "✔"))
+        
     if soporte_electronico:
         q_filter &= Q(soporte_electronico=(soporte_electronico == "✔"))
+        
+    # Mantener exacto para caja y carpeta
     if caja:
-        q_filter &= Q(caja__icontains=caja)
+        try:
+            q_filter &= Q(caja=int(caja))
+        except ValueError:
+            pass # Ignorar si no es un número válido para caja
+            
     if carpeta:
-        q_filter &= Q(carpeta__icontains=carpeta)
+        try:
+            q_filter &= Q(carpeta=int(carpeta))
+        except ValueError:
+            pass # Ignorar si no es un número válido para carpeta
+            
     if tomo_legajo:
         q_filter &= Q(tomo_legajo_libro__icontains=tomo_legajo)
+        
     if numero_folios:
-        q_filter &= Q(numero_folios__icontains=numero_folios)
+        q_filter &= Q(numero_folios__icontains=numero_folios) # Volver a icontains
+            
     if tipo:
         q_filter &= Q(tipo__icontains=tipo)
+        
     if cantidad:
-        q_filter &= Q(cantidad__icontains=cantidad)
+        q_filter &= Q(cantidad__icontains=cantidad) # Volver a icontains
+            
     if ubicacion:
         q_filter &= Q(ubicacion__icontains=ubicacion)
+        
     if cant_elec:
-        q_filter &= Q(cantidad_documentos_electronicos__icontains=cant_elec)
+        q_filter &= Q(cantidad_documentos_electronicos__icontains=cant_elec) # Volver a icontains
+            
     if tamano_elec:
         q_filter &= Q(tamano_documentos_electronicos__icontains=tamano_elec)
+        
     if notas:
         q_filter &= Q(notas__icontains=notas)
+        
     if creado_por:
         q_filter &= Q(creado_por__username__icontains=creado_por)
+        
     if fecha_creacion:
-        q_filter &= Q(fecha_creacion__icontains=fecha_creacion)
+        q_filter &= Q(fecha_creacion__startswith=fecha_creacion)
+        
     if estado_archivo:
         q_filter &= Q(Estado_archivo=(estado_archivo == "✔"))
 
@@ -1048,51 +1087,71 @@ def registros_fuid_json(request, fuid_id):
 
 @login_required
 def agregar_registro_a_fuid(request, fuid_id):
-    # Verificamos que el usuario tenga permiso de agregar registros
-    if not request.user.has_perm('documentos.add_registrodearchivo'):
-        return HttpResponseForbidden("No tienes permiso para crear registros.")
-
     fuid = get_object_or_404(FUID, pk=fuid_id)
+    # Aquí podrías añadir verificaciones de permisos si son necesarias
+    # if not request.user.has_perm('documentos.add_registro_to_fuid', fuid):
+    #     return HttpResponseForbidden("No tienes permiso para agregar registros a este FUID.")
 
     if request.method == 'POST':
-        # IMPORTANTE: incluir request.FILES para que se procese el archivo
-        form = RegistroDeArchivoForm(request.POST, request.FILES)
+        form = RegistroDeArchivoForm(request.POST, request.FILES) # Incluir request.FILES
         if form.is_valid():
             registro = form.save(commit=False)
             registro.creado_por = request.user
-            registro.save()
 
-            # Crear Documento si se subió un archivo
+            # --- Calcular y asignar el siguiente numero_orden para este FUID ---
+            max_orden_data = fuid.registros.aggregate(max_orden=Max('numero_orden'))
+            max_orden = max_orden_data.get('max_orden')
+            if max_orden is None: # Si no hay registros o el campo es nulo
+                next_numero_orden = 1
+            else:
+                next_numero_orden = max_orden + 1
+            registro.numero_orden = next_numero_orden
+            # --- Fin del cálculo ---
+
+            registro.save() # Guardar el registro principal
+
+            # --- Crear el objeto Documento si se subió un archivo ---            
             archivo_subido = form.cleaned_data.get('archivo')
             if archivo_subido:
-                Documento.objects.create(
-                    registro=registro,
-                    archivo=archivo_subido
-                )
+                try:
+                    Documento.objects.create(
+                        registro=registro,
+                        archivo=archivo_subido
+                    )
+                except Exception as e:
+                    # Manejar error de creación de documento si es necesario
+                    messages.error(request, f"Error al guardar el documento adjunto: {e}")
+                    # Podrías decidir si continuar o no, aquí continuamos pero mostramos error
+            # --- Fin manejo de archivo ---
 
-            # Asignar permisos a nivel de objeto
-            assign_perm('documentos.view_own_registro', request.user, registro)
-            assign_perm('documentos.edit_own_registro', request.user, registro)
-
-            # Asociar el registro recién creado al FUID
+            # Asociar el registro recién guardado al FUID
             fuid.registros.add(registro)
 
-            messages.success(request, 'Registro creado y asociado correctamente al FUID.')
-            form = RegistroDeArchivoForm()  # reiniciar el formulario
-        else:
-            for field, errors in form.errors.items():
-                field_name = form.fields[field].label
-                for error in errors:
-                    messages.error(request, f"{field_name}: {error}")
-    else:
-        form = RegistroDeArchivoForm()
-        # Si no se ha seleccionado una serie, dejamos vacío el queryset de subseries
-        form.fields['codigo_subserie'].queryset = SubserieDocumental.objects.none()
+            # Asignar permisos si es necesario (ejemplo)
+            # assign_perm('view_registrodearchivo', request.user, registro)
+            # assign_perm('change_registrodearchivo', request.user, registro)
 
-    return render(request, 'agregar_registro_a_fuid.html', {
+            messages.success(request, f'Registro con orden #{next_numero_orden} agregado exitosamente al FUID #{fuid.id}.')
+            return redirect('detalle_fuid', pk=fuid.id) # Redirigir a la vista de detalle del FUID
+        else:
+            # Mostrar errores del formulario
+            for field, errors in form.errors.items():
+                try:
+                    field_label = form.fields[field].label if field != '__all__' else 'Errores generales'
+                except KeyError:
+                    field_label = field
+                for error in errors:
+                    messages.error(request, f"{field_label}: {error}")
+
+    else: # Método GET
+        form = RegistroDeArchivoForm()
+        # Puedes pre-configurar la serie/subserie si es necesario aquí
+
+    context = {
         'form': form,
         'fuid': fuid
-    })
+    }
+    return render(request, 'agregar_registro_a_fuid.html', context)
 
 
 

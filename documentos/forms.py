@@ -70,9 +70,10 @@ class RegistroDeArchivoForm(forms.ModelForm):
 
     class Meta:
         model = RegistroDeArchivo
-        exclude = ['creado_por']
+        exclude = ['creado_por', 'numero_orden']
         widgets = {
             'Estado_archivo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'tamano_documentos_electronicos': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
