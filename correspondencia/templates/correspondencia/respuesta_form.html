@@ -1,0 +1,105 @@
+{% extends 'correspondencia/base_correspondencia_usuario.html' %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    Información de la Correspondencia Original
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">N° Radicado:</dt>
+                        <dd class="col-sm-9">{{ correspondencia_entrada.numero_radicado }}</dd>
+                        <dt class="col-sm-3">Fecha Radicación:</dt>
+                        <dd class="col-sm-9">{{ correspondencia_entrada.fecha_radicacion|date:"Y-m-d H:i" }}</dd>
+                        <dt class="col-sm-3">Remitente:</dt>
+                        <dd class="col-sm-9">{{ correspondencia_entrada.remitente }}</dd>
+                        <dt class="col-sm-3">Asunto Original:</dt>
+                        <dd class="col-sm-9">{{ correspondencia_entrada.asunto }}</dd>
+                        <dt class="col-sm-3">Destinatario Respuesta:</dt>
+                        <dd class="col-sm-9"><strong>{{ correspondencia_entrada.remitente.nombre_completo }} &lt;{{ correspondencia_entrada.remitente.correo_electronico|default:"Sin correo" }}></strong> (No editable)</dd>
+                    </dl>
+                    {% if respuesta_existente and respuesta_existente.motivo_rechazo %}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <h5 class="alert-heading">Respuesta Rechazada</h5>
+                        <p><strong>Motivo:</strong> {{ respuesta_existente.motivo_rechazo|linebreaksbr }}</p>
+                        <p class="mb-0">Por favor, corrija la respuesta y envíela nuevamente a aprobación.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    {% if respuesta_existente %}Editar Borrador de Respuesta{% else %}Crear Respuesta{% endif %}
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.asunto.id_for_label }}" class="form-label">Asunto</label>
+                            {{ form.asunto }}
+                            {% if form.asunto.errors %}
+                                <div class="text-danger">{{ form.asunto.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.cuerpo.id_for_label }}" class="form-label">Cuerpo</label>
+                            {{ form.cuerpo }}
+                            {% if form.cuerpo.errors %}
+                                <div class="text-danger">{{ form.cuerpo.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="adjuntos_respuesta" class="form-label">Adjuntar archivos</label>
+                            <input type="file" name="adjuntos_respuesta" id="adjuntos_respuesta" multiple class="form-control">
+                            <small class="form-text text-muted">Puede seleccionar varios archivos.</small>
+                        </div>
+
+                        {% if adjuntos_actuales %}
+                        <div class="mb-3">
+                            <p><strong>Adjuntos actuales:</strong></p>
+                            <ul class="list-group">
+                                {% for adjunto in adjuntos_actuales %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-paperclip"></i> 
+                                        <a href="{{ adjunto.archivo.url }}" target="_blank">{{ adjunto.nombre_original|default:adjunto.archivo.name }}</a>
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <small class="form-text text-muted">Si sube nuevos archivos, se añadirán a los existentes.</small>
+                        </div>
+                        {% endif %}
+
+                        <hr>
+                        <div class="d-flex justify-content-between mt-3">
+                            <a href="{% url 'correspondencia:detalle_correspondencia' correspondencia_entrada.pk %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <div>
+                                <button type="submit" name="guardar_borrador" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-save me-1"></i> Guardar Borrador
+                                </button>
+                                <button type="submit" name="enviar_aprobacion" class="btn btn-primary">
+                                    <i class="bi bi-send-check me-1"></i> Enviar a Aprobación
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

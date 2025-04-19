@@ -1,0 +1,70 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static %}
+
+{% block title %}Correos Pendientes de Radicar (IA){% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4 text-primary"><i class="bi bi-robot me-2"></i>{{ titulo_pagina }}</h2>
+
+    {% if correos_clasificados %}
+        <div class="table-container">
+            <table id="tabla-clasificados" class="table table-striped table-hover table-bordered align-middle datatable-correspondencia">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="col-fecha">Clasificado</th>
+                        <th scope="col" class="col-remitente">Remitente</th>
+                        <th scope="col" class="col-asunto">Asunto</th>
+                        <th scope="col" class="col-oficina">Oficina (IA)</th>
+                        <th scope="col" class="col-serie">Serie (IA)</th>
+                        <th scope="col" class="col-subserie">Subserie (IA)</th>
+                        <th scope="col" class="col-adjuntos">Adjuntos</th>
+                        <th scope="col" class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for correo in correos_clasificados %}
+                    <tr class="align-middle">
+                        <td class="py-2 px-3 col-fecha">{{ correo.fecha_clasificacion|date:'Y-m-d H:i' }}</td>
+                        <td class="py-2 px-3 col-remitente" title="{{ correo.remitente }}">{{ correo.remitente }}</td>
+                        <td class="py-2 px-3 col-asunto wrap-text" title="{{ correo.asunto }}">{{ correo.asunto }}</td>
+                        <td class="py-2 px-3 col-oficina" title="{{ correo.oficina_clasificada.nombre|default:'' }}">{{ correo.oficina_clasificada.nombre|default:'<span class="text-muted">No asignada</span>'|safe }}</td>
+                        <td class="py-2 px-3 col-serie" title="{{ correo.serie_clasificada.nombre|default:'' }}">{{ correo.serie_clasificada.nombre|default:'<span class="text-muted">No asignada</span>'|safe }}</td>
+                        <td class="py-2 px-3 col-subserie" title="{{ correo.subserie_clasificada.nombre|default:'' }}">{{ correo.subserie_clasificada.nombre|default:'<span class="text-muted">No asignada</span>'|safe }}</td>
+                        <td class="py-2 px-3 col-adjuntos">
+                            {% if correo.adjuntos.all %}
+                                {% for adjunto in correo.adjuntos.all %}
+                                    <a href="{{ adjunto.archivo.url }}" target="_blank" class="d-block mb-1" title="{{ adjunto.nombre_original }}">
+                                        <i class="bi bi-paperclip"></i> {{ adjunto.nombre_original|truncatechars:25 }}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted">Ninguno</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-3 col-acciones actions-cell">
+                            <a href="{% url 'correspondencia:radicar_desde_correo' correo_id=correo.pk %}" class="btn btn-primary btn-sm" title="Radicar esta correspondencia">
+                                <i class="bi bi-pencil-square me-1"></i> Radicar
+                            </a>
+                            <a href="{% url 'correspondencia:detalle_correo_clasificado' correo.pk %}" class="btn btn-secondary btn-sm" title="Ver detalle">
+                                <i class="bi bi-eye me-1"></i> Detalle
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> No hay correos clasificados pendientes de radicación en este momento.
+        </div>
+    {% endif %}
+
+     <div class="mt-4">
+        <a href="{% url 'correspondencia:welcome' %}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Volver al Inicio</a>
+    </div>
+
+</div>
+{% endblock %} 

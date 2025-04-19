@@ -1,0 +1,103 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .table td, .table th {
+        font-size: 0.88rem;
+        color: #343a40;
+        vertical-align: middle;
+    }
+
+    .btn-sm.btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+        font-weight: 500;
+        font-size: 0.80rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .btn-sm.btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
+
+    .badge.estado {
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.35em 0.6em;
+        display: inline-block;
+    }
+
+    .badge.aprobada     { background-color: #198754; color: white; }
+    .badge.rechazada    { background-color: #dc3545; color: white; }
+    .badge.pendiente    { background-color: #ffc107; color: #212529; }
+    .badge.enviada      { background-color: #0d6efd; color: white; }
+    .badge.errorenvio   { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+
+    /* Estado por defecto si no coincide con ninguno anterior */
+    .badge.estado:not([class*="badge.aprobada"]):not([class*="badge.rechazada"])
+    :not([class*="badge.pendiente"]):not([class*="badge.enviada"]):not([class*="badge.errorenvio"]) {
+        background-color: #e2e3e5;
+        color: #41464b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Respuestas Pendientes de Revisión</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover datatable-correspondencia align-middle" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="col-fecha">Fecha Creación</th>
+                        <th>Radicado Original</th>
+                        <th>Redactor</th>
+                        <th>Destinatario</th>
+                        <th class="col-asunto">Asunto Respuesta</th>
+                        <th>Estado</th>
+                        <th class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for respuesta in respuestas %}
+                    <tr>
+                        <td><small>{{ respuesta.fecha_creacion|date:"Y-m-d H:i" }}</small></td>
+                        <td>
+                            <a href="{% url 'correspondencia:detalle_correspondencia' respuesta.respuesta_a.pk %}" target="_blank" title="Ver correspondencia original">
+                                {{ respuesta.respuesta_a.numero_radicado }}
+                            </a>
+                        </td>
+                        <td>{{ respuesta.usuario_redactor.get_full_name|default:respuesta.usuario_redactor.username }}</td>
+                        <td>{{ respuesta.destinatario_contacto.nombre_completo|default:"-" }}</td>
+                        <td>{{ respuesta.asunto|truncatechars:70 }}</td>
+                        <td>
+                            <span class="badge estado {{ respuesta.estado|lower|cut:'_' }}">
+                                {{ respuesta.get_estado_display }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'correspondencia:revisar_respuesta' respuesta.pk %}" class="btn btn-sm btn-primary" title="Revisar y Aprobar/Rechazar">
+                                <i class="bi bi-pencil-square"></i> Revisar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No hay respuestas pendientes de aprobación.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

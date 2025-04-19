@@ -1,0 +1,53 @@
+{% extends 'correspondencia/base_correspondencia_usuario.html' %}
+{% load static widget_tweaks humanize %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4 text-primary"><i class="bi bi-grid-1x2-fill me-2"></i>{{ titulo_pagina }}</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not load_success %}
+        <div class="alert alert-danger" role="alert">
+            Hubo un problema al cargar la información de la correspondencia. Por favor, contacta al administrador.
+        </div>
+    {% else %}
+        {# Sección Recibidos de Ventanilla #}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-envelope-paper-fill me-2"></i>Recibidos de Ventanilla</h5>
+            </div>
+            <div class="card-body">
+                {% if recibidos_ventanilla %}
+                    {% include 'correspondencia/includes/tabla_correspondencia.html' with correspondencias=recibidos_ventanilla tipo_tabla='recibidos' %}
+                {% else %}
+                    <p class="text-muted">No tienes correspondencia nueva asignada por Ventanilla.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Sección Compartidos por Colegas #}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Compartidos por Colegas</h5>
+            </div>
+            <div class="card-body">
+                {% if compartidos_colegas %}
+                     {% include 'correspondencia/includes/tabla_correspondencia.html' with correspondencias=compartidos_colegas tipo_tabla='compartidos' %}
+                {% else %}
+                    <p class="text-muted">No te han compartido correspondencia recientemente.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

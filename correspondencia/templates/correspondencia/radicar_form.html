@@ -1,0 +1,185 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+<!-- {% load static %} -->
+{% load widget_tweaks %}
+
+{% block title %}{{ titulo_pagina|default:"Radicar Correspondencia" }}{% endblock %}
+
+{% block page_title %}{{ titulo_pagina|default:"Radicar Nueva Correspondencia Entrante" }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="card shadow-sm border-0 mx-auto" style="max-width: 960px;">
+    <div class="card-body p-4">
+      <h5 class="card-title mb-4">{{ titulo_pagina|default:"Radicar Nueva Correspondencia Entrante" }}</h5>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="{{ form.remitente.id_for_label }}" class="form-label">{{ form.remitente.label }}</label>
+            {% render_field form.remitente class+="form-select" %}
+            {% if form.remitente.errors %}
+              <div class="invalid-feedback d-block">{{ form.remitente.errors|first }}</div>
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+            <label for="{{ form.medio_recepcion.id_for_label }}" class="form-label">{{ form.medio_recepcion.label }}</label>
+            {% render_field form.medio_recepcion class+="form-select" %}
+            {% if form.medio_recepcion.errors %}
+              <div class="invalid-feedback d-block">{{ form.medio_recepcion.errors|first }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.asunto.id_for_label }}" class="form-label">{{ form.asunto.label }}</label>
+          {% render_field form.asunto class+="form-control" rows="3" %}
+          {% if form.asunto.errors %}
+            <div class="invalid-feedback d-block">{{ form.asunto.errors|first }}</div>
+          {% endif %}
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="{{ form.serie.id_for_label }}" class="form-label">{{ form.serie.label }}</label>
+            {% render_field form.serie class+="form-select select2" id="id_serie" %}
+            {% if form.serie.errors %}
+              <div class="invalid-feedback d-block">{{ form.serie.errors|first }}</div>
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+            <label for="{{ form.subserie.id_for_label }}" class="form-label">{{ form.subserie.label }}</label>
+            {% render_field form.subserie class+="form-select select2" id="id_subserie" %}
+            {% if form.subserie.errors %}
+              <div class="invalid-feedback d-block">{{ form.subserie.errors|first }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.oficina_destino.id_for_label }}" class="form-label">{{ form.oficina_destino.label }}</label>
+          {% render_field form.oficina_destino class+="form-select select2" %}
+          {% if form.oficina_destino.errors %}
+            <div class="invalid-feedback d-block">{{ form.oficina_destino.errors|first }}</div>
+          {% endif %}
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-auto">
+            <div class="form-check">
+              {% render_field form.requiere_respuesta class+="form-check-input" id="id_requiere_respuesta" %}
+              <label class="form-check-label" for="{{ form.requiere_respuesta.id_for_label }}">
+                {{ form.requiere_respuesta.label }}
+              </label>
+            </div>
+          </div>
+          <div class="col">
+            {% render_field form.tiempo_respuesta class+="form-select form-select-sm" id="id_tiempo_respuesta" disabled=true %}
+            {% if form.tiempo_respuesta.errors %}
+              <div class="invalid-feedback d-block">{{ form.tiempo_respuesta.errors|first }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.archivo_adjunto.id_for_label }}" class="form-label">{{ form.archivo_adjunto.label }}</label>
+          {% render_field form.archivo_adjunto class+="form-control" %}
+          {% if form.archivo_adjunto.errors %}
+            <div class="invalid-feedback d-block">{{ form.archivo_adjunto.errors|first }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mt-4 d-flex gap-3">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Radicar Correspondencia
+          </button>
+          <a href="{% url 'correspondencia:pendientes_distribuir' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_scripts %}
+{# Script para cargar subseries dinámicamente y habilitar/deshabilitar tiempo_respuesta #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const serieSelect = document.getElementById('id_serie');
+    const subserieSelect = document.getElementById('id_subserie');
+    const requiereRespuestaCheckbox = document.getElementById('id_requiere_respuesta');
+    const tiempoRespuestaSelect = document.getElementById('id_tiempo_respuesta');
+
+    // --- Carga dinámica de Subseries --- 
+    function cargarSubseries() {
+        const serieId = serieSelect.value;
+        // ¡Asegúrate de que esta URL exista y funcione correctamente!
+        // Asumiendo que 'cargar_subseries' está en la app 'documentos'
+        const url = "{% url 'cargar_subseries' %}?serie_id=" + serieId;
+
+        subserieSelect.innerHTML = '<option value="">Cargando...</option>';
+        subserieSelect.disabled = true;
+
+        if (!serieId) {
+            subserieSelect.innerHTML = '<option value="">Seleccione una serie</option>';
+            subserieSelect.disabled = true;
+            return;
+        }
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                subserieSelect.innerHTML = '<option value="">---------</option>'; // Opción vacía
+                if (data && Array.isArray(data) && data.length > 0) {
+                    data.forEach(subserie => {
+                        const option = document.createElement('option');
+                        option.value = subserie.id;
+                        option.textContent = subserie.nombre;
+                        subserieSelect.appendChild(option);
+                    });
+                    subserieSelect.disabled = false;
+                } else {
+                    subserieSelect.innerHTML = '<option value="">No hay subseries asociadas</option>';
+                    subserieSelect.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando subseries:', error);
+                subserieSelect.innerHTML = '<option value="">Error al cargar</option>';
+                subserieSelect.disabled = true;
+            });
+    }
+
+    // --- Habilitar/Deshabilitar Tiempo de Respuesta --- 
+    function toggleTiempoRespuesta() {
+        tiempoRespuestaSelect.disabled = !requiereRespuestaCheckbox.checked;
+        if (!requiereRespuestaCheckbox.checked) {
+            tiempoRespuestaSelect.value = ''; // Limpiar selección si se deshabilita
+        }
+    }
+
+    // --- Event Listeners --- 
+    if (serieSelect) serieSelect.addEventListener('change', cargarSubseries);
+    if (requiereRespuestaCheckbox) requiereRespuestaCheckbox.addEventListener('change', toggleTiempoRespuesta);
+
+    // --- Ejecutar al inicio --- 
+    if (serieSelect) cargarSubseries(); // Cargar subseries iniciales si hay serie seleccionada
+    if (requiereRespuestaCheckbox) toggleTiempoRespuesta(); // Establecer estado inicial de tiempo_respuesta
+});
+</script>
+{% endblock %} 

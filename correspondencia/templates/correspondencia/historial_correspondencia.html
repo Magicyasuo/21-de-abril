@@ -1,0 +1,184 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+    {# Sección de Filtros Colapsable #}
+    <details class="card card-outline card-info mb-4" {% if filtros_activos.values|join:'' != '' %}open{% endif %}> {# Abierto por defecto si hay filtros activos #}
+        <summary class="card-header">
+            <h3 class="card-title d-inline-block me-2"><i class="bi bi-filter me-1"></i>Filtros Avanzados</h3>
+            <small class="text-muted">(Haz clic para expandir/colapsar)</small>
+        </summary>
+        <div class="card-body">
+            <form method="get" action="" id="historial-filter-form">
+                {% crispy form %}
+            </form>
+             {# Mostrar filtros activos (opcional pero útil) #}
+             {% if filtros_activos %}
+                 <div class="mt-3 p-2 border rounded bg-light small">
+                     <strong>Filtros aplicados:</strong>
+                     {% for key, data in filtros_activos.items %}
+                         {% if data.value %}
+                            <span class="badge bg-secondary me-1">
+                                {{ data.label }}: 
+                                {% if key == 'fecha_inicio' or key == 'fecha_fin' %}
+                                    {{ data.value|date:"d/m/Y" }}
+                                {% else %}
+                                    {{ data.value|default:"-" }}
+                                {% endif %}
+                            </span>
+                         {% endif %}
+                     {% endfor %}
+                 </div>
+            {% endif %}
+        </div>
+    </details>
+
+    {# Resultados del Historial #}
+    <div class="card card-primary card-outline">
+         <div class="card-header">
+             <h3 class="card-title"><i class="bi bi-list-ul me-1"></i>Resultados del Historial</h3>
+             <div class="card-tools">
+                 <span class="badge bg-dark">Total: {{ page_obj.paginator.count }} registro{{ page_obj.paginator.count|pluralize }}</span>
+             </div>
+         </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="col-fecha">Fecha</th>
+                            <th class="col-tipo">Tipo</th>
+                            <th class="col-radicado">Radicado</th>
+                            <th class="col-asunto">Asunto</th>
+                            <th class="col-oficina">Oficina Rel.</th>
+                            <th class="col-estado text-center">Estado</th>
+                            {# Añadir columna para usuario si se quiere #}
+                             <th class="col-usuario">Usuario Invol.</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in page_obj %}
+                        <tr>
+                            <td class="col-fecha" title="{{ item.fecha|date:"d/m/Y H:i:s" }}">{{ item.fecha|naturaltime }}</td>
+                            <td class="col-tipo text-center">
+                                {% if item.tipo == 'Entrada' %}
+                                    <span class="badge bg-info" title="Entrada"><i class="bi bi-arrow-down-circle"></i></span>
+                                {% elif item.tipo == 'Salida' %}
+                                    <span class="badge bg-primary" title="Salida"><i class="bi bi-arrow-up-circle"></i></span>
+                                {% else %}
+                                    {{ item.tipo }}
+                                {% endif %}
+                            </td>
+                            <td class="col-radicado">
+                                {% if item.detail_url != '#' %}
+                                    <a href="{{ item.detail_url }}" title="Ver detalle">{{ item.radicado }}</a>
+                                {% else %}
+                                    {{ item.radicado }}
+                                {% endif %}
+                            </td>
+                            <td class="col-asunto">{{ item.asunto|truncatechars:50 }}</td>
+                            <td class="col-oficina">{{ item.oficina }}</td>
+                            <td class="col-estado text-center">
+                                {# Código badges de estado (sin cambios) ... #}
+                                {% if item.tipo == 'Salida' %}
+                                    {% if item.estado_key == 'ENVIADA' %}
+                                        <span class="badge bg-success" title="{{ item.estado_display }}"><i class="bi bi-check-circle-fill"></i></span>
+                                    {% elif item.estado_key == 'ERROR_ENVIO' %}
+                                        <span class="badge bg-danger" title="{{ item.estado_display }}"><i class="bi bi-x-octagon-fill"></i></span>
+                                    {% elif item.estado_key == 'RECHAZADA' %}
+                                        <span class="badge bg-danger" title="{{ item.estado_display }}"><i class="bi bi-hand-thumbs-down-fill"></i></span>
+                                    {% elif item.estado_key == 'PENDIENTE_APROBACION' %}
+                                        <span class="badge bg-warning text-dark" title="{{ item.estado_display }}"><i class="bi bi-hourglass-split"></i></span>
+                                     {% elif item.estado_key == 'APROBADA' %}
+                                        <span class="badge bg-info text-dark" title="{{ item.estado_display }}"><i class="bi bi-hand-thumbs-up-fill"></i></span>
+                                     {% elif item.estado_key == 'BORRADOR' %}
+                                        <span class="badge bg-secondary" title="{{ item.estado_display }}"><i class="bi bi-pencil-fill"></i></span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark" title="{{ item.estado_display }}">{{ item.estado_key }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    {# Estados de Entrada #}
+                                     {% if item.estado_key == 'RADICADA' %}
+                                         <span class="badge bg-secondary" title="{{ item.estado_display }}"><i class="bi bi-file-earmark-check"></i></span>
+                                     {% elif item.estado_key == 'ASIGNADA_USUARIO' %}
+                                         <span class="badge bg-primary" title="{{ item.estado_display }}"><i class="bi bi-person-check"></i></span>
+                                     {% elif item.estado_key == 'LEIDA' %}
+                                         <span class="badge bg-success" title="{{ item.estado_display }}"><i class="bi bi-eye"></i></span>
+                                     {% elif item.estado_key == 'RESPONDIDA' %}
+                                         <span class="badge bg-success" title="{{ item.estado_display }}"><i class="bi bi-reply-fill"></i></span>
+                                     {% else %}
+                                         <span class="badge bg-light text-dark" title="{{ item.estado_display }}">{{ item.estado_key }}</span>
+                                     {% endif %}
+                                {% endif %}
+                            </td>
+                             {# Columna Usuario Involucrado #}
+                             <td class="col-usuario">
+                                 {% if item.tipo == 'Entrada' and item.usuario_radicador %}
+                                     <span title="Radicó">{{ item.usuario_radicador.username }}</span>
+                                 {% elif item.tipo == 'Salida' %}
+                                     {% if item.usuario_redactor %}
+                                         <span title="Redactó">{{ item.usuario_redactor.username }}</span>
+                                     {% endif %}
+                                     {% if item.usuario_aprobador %}
+                                         <span title="Aprobó/Rechazó"> ({{ item.usuario_aprobador.username }})</span>
+                                     {% endif %}
+                                 {% else %}
+                                     -
+                                 {% endif %}
+                             </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center fst-italic text-muted py-4">No hay registros en el historial que coincidan con los filtros aplicados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer clearfix">
+             {% if page_obj.has_other_pages %}
+                 {% include "includes/paginacion.html" with page_obj=page_obj %}
+             {% endif %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script>
+$(document).ready(function() {
+    // Inicializar Select2 para los campos que lo usan en el filtro
+    $('#historial-filter-form .select2').select2({
+        theme: 'bootstrap-5',
+        width: 'style', // Ajustar ancho automáticamente
+        placeholder: $(this).data('placeholder') || 'Seleccionar...',
+        allowClear: true
+    });
+
+    // Lógica simple para mostrar/ocultar filtros de estado basados en el tipo
+    function toggleEstadoFields() {
+        var tipo = $('#id_tipo').val();
+        if (tipo === 'Entrada') {
+            $('#div_id_estado_entrada').show();
+            $('#div_id_estado_salida').hide();
+            $('#id_estado_salida').val(''); // Limpiar el otro campo
+        } else if (tipo === 'Salida') {
+            $('#div_id_estado_entrada').hide();
+            $('#id_estado_salida').show();
+             $('#id_estado_entrada').val(''); // Limpiar el otro campo
+        } else { // Ambos o vacío
+            $('#div_id_estado_entrada').show();
+            $('#div_id_estado_salida').show();
+        }
+    }
+
+    // Ejecutar al cargar y al cambiar el tipo
+    toggleEstadoFields();
+    $('#id_tipo').on('change', toggleEstadoFields);
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,99 @@
+{% extends 'correspondencia/base_correspondencia_usuario.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+{% block page_title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+{# Mostrar el mensaje de error si la carga falló #}
+{% if not load_success %}
+    <div class="alert alert-danger" role="alert">
+        Hubo un problema al cargar la bandeja de la oficina. Contacte al administrador.
+    </div>
+{% endif %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ page_title }}</h6>
+    </div>
+    <div class="card-body">
+        {% if load_success %}
+        <div class="table-responsive">
+            {# Añadir clase align-middle para centrar verticalmente #}
+            <table class="table table-bordered table-striped table-hover datatable-correspondencia align-middle" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="col-fecha">Recibido</th>
+                        <th>No. Radicado</th>
+                        <th class="col-remitente">Remitente</th>
+                        <th class="col-asunto">Asunto</th>
+                        {# Nuevas Columnas #}
+                        <th style="width: 100px;">Estado Lectura</th>
+                        <th style="width: 120px;">Plazo Respuesta</th>
+                        <th>Asignado Inicial</th> {# Quién recibió de ventanilla #}
+                        <th class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in correspondencias %}
+                     {# En oficina, el warning podría basarse en si leido_por_oficina es False #}
+                     <tr class="{% if not item.leido_por_oficina %}table-light{% endif %}"> 
+                        <td class="col-fecha"><small>{{ item.fecha_radicacion|date:"Y-m-d H:i" }}</small></td>
+                        <td>{{ item.numero_radicado }}</td>
+                        <td class="col-remitente">{{ item.remitente.nombre_completo|default:"-" }}</td>
+                        <td class="col-asunto">{{ item.asunto|truncatechars:60 }}</td>
+                         {# Celda Estado Lectura (X/Y) #}
+                        <td class="text-center">
+                             {% if item.total_destinatarios > 0 %}
+                             <span class="badge {% if item.total_leidos == item.total_destinatarios %}bg-success{% elif item.total_leidos > 0 %}bg-info{% else %}bg-secondary{% endif %}">
+                                 {{ item.total_leidos }}/{{ item.total_destinatarios }}
+                             </span>
+                             {% else %}
+                             <span class="badge bg-light text-dark">N/A</span>
+                             {% endif %}
+                         </td>
+                         {# Celda Plazo Respuesta #}
+                         <td class="text-center">
+                             {% if item.requiere_respuesta %}
+                                 {% with estado_plazo=item.estado_plazo dias=item.dias_restantes %}
+                                     {% if estado_plazo == 'vencido' %}
+                                         <span class="badge bg-danger">Vencido ({{ dias }}d)</span>
+                                     {% elif estado_plazo == 'critico' %}
+                                         <span class="badge bg-danger">{{ dias }} día(s)</span>
+                                     {% elif estado_plazo == 'urgente' %}
+                                         <span class="badge bg-warning text-dark">{{ dias }} días</span>
+                                     {% elif estado_plazo == 'proximo' %}
+                                         <span class="badge bg-info text-dark">{{ dias }} días</span>
+                                     {% elif estado_plazo == 'ok' %}
+                                         <span class="badge bg-success">{{ dias }} días</span>
+                                     {% endif %}
+                                 {% endwith %}
+                             {% else %}
+                                 <span class="text-muted small">No requiere</span>
+                             {% endif %}
+                         </td>
+                        <td><small>{{ item.usuario_destino_inicial.get_full_name|default:item.usuario_destino_inicial.username|default:"-" }}</small></td>
+                        <td class="col-acciones text-center">
+                            <a href="{% url 'correspondencia:detalle_correspondencia' item.pk %}" class="btn btn-sm btn-primary" title="Ver Detalles">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            {# El botón compartir no se muestra en la bandeja de oficina #}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No hay correspondencia compartida en esta oficina.</td> {# Ajustar colspan #}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+         <div class="alert alert-warning" role="alert">
+             No se pudo cargar la información de la bandeja de oficina.
+         </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

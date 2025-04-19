@@ -1,0 +1,113 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static humanize %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-primary"><i class="bi bi-person-lines-fill me-2"></i>{{ titulo_pagina }}</h2>
+        <div class="d-flex">
+             <form method="get" action="{% url 'correspondencia:listar_contactos' %}" class="me-2 d-flex">
+                 <input type="text" name="q" class="form-control form-control-sm me-1" placeholder="Buscar contacto..." value="{{ search_query }}">
+                 <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button>
+             </form>
+            <a href="{% url 'correspondencia:crear_contacto' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle-fill me-1"></i> Crear Nuevo Contacto
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Lista de Contactos Registrados
+        </div>
+        <div class="card-body">
+            {% if contactos %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="py-2 px-3">Nombre Contacto</th>
+                                <th class="py-2 px-3">Entidad Externa</th> {# Nueva columna #}
+                                <th class="py-2 px-3">Cargo</th>
+                                <th class="py-2 px-3">Correo Electrónico</th>
+                                <th class="py-2 px-3">Teléfono Contacto</th>
+                                <th class="py-2 px-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contacto in contactos %}
+                            <tr>
+                                <td class="py-2 px-3">{{ contacto.nombre_completo }}</td>
+                                <td class="py-2 px-3">{{ contacto.entidad_externa.nombre }}</td> {# Mostrar nombre de entidad #}
+                                <td class="py-2 px-3">{{ contacto.cargo|default:"-" }}</td>
+                                <td class="py-2 px-3">{{ contacto.correo_electronico|default:"-" }}</td>
+                                <td class="py-2 px-3">{{ contacto.telefono_contacto|default:"-" }}</td>
+                                <td class="py-2 px-3 text-center">
+                                    {# Añadir botones Editar/Eliminar cuando se implementen #}
+                                    <a href="#" class="btn btn-sm btn-outline-primary disabled" title="Editar (Próximamente)"><i class="bi bi-pencil"></i></a>
+                                    <a href="#" class="btn btn-sm btn-outline-danger disabled" title="Eliminar (Próximamente)"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {# Paginación #}
+                {% if contactos.has_other_pages %}
+                <nav aria-label="Page navigation" class="mt-3">
+                    <ul class="pagination justify-content-center">
+                         {% if contactos.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ contactos.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">&laquo;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        {% endif %}
+                        {% for i in contactos.paginator.page_range %}
+                            {% if contactos.number == i %}
+                                <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+                             {% elif i > contactos.number|add:'-3' and i < contactos.number|add:'3' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if search_query %}&q={{ search_query }}{% endif %}">{{ i }}</a></li>
+                            {% elif i == contactos.paginator.num_pages or i == 1 %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if contactos.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ contactos.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">&raquo;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% else %}
+                 <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    {% if search_query %}
+                        No se encontraron contactos que coincidan con "{{ search_query }}".
+                    {% else %}
+                        No hay contactos externos registrados todavía.
+                         <a href="{% url 'correspondencia:crear_contacto' %}" class="alert-link ms-2">Crear el primer contacto</a>.
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

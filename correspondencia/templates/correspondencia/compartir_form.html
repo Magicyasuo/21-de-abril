@@ -1,0 +1,60 @@
+{% extends 'correspondencia/base_correspondencia_usuario.html' %}
+{% load static widget_tweaks humanize %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ titulo_pagina }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4 p-3 bg-light border rounded">
+                        <h5>Detalles de la Correspondencia</h5>
+                        <p><strong>Número de Radicado:</strong> {{ correspondencia.numero_radicado }}</p>
+                        <p><strong>Asunto:</strong> {{ correspondencia.asunto }}</p>
+                        <p><strong>Remitente:</strong> {{ correspondencia.remitente }}</p>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.usuarios.label }}</label>
+                            {% render_field form.usuarios class="form-check" %}
+                             {% if form.usuarios.errors %}
+                                <div class="invalid-feedback d-block">{{ form.usuarios.errors|first }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Selecciona uno o más colegas de tu oficina para compartir este radicado.</small>
+                        </div>
+
+                        <div class="mb-3">
+                             <label for="{{ form.observaciones.id_for_label }}" class="form-label">{{ form.observaciones.label }}</label>
+                             {% render_field form.observaciones class="form-control" rows="3" %}
+                             {% if form.observaciones.errors %}
+                                <div class="invalid-feedback d-block">{{ form.observaciones.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-end">
+                            <a href="{% url 'correspondencia:detalle_correspondencia' pk=correspondencia.pk %}" class="btn btn-secondary me-2">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-share-fill me-1"></i>Compartir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

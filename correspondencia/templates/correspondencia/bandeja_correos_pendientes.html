@@ -1,0 +1,115 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Gestión de Correos Entrantes{% endblock %}
+{% block page_title %}Gestión de Correos Entrantes{% endblock %}
+
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Correos Recibidos</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover datatable-correspondencia" id="dataTableCorreos" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="col-fecha">Fecha Recepción</th>
+                        <th>Remitente</th>
+                        <th class="col-asunto">Asunto</th>
+                        <th>Estado</th>
+                        <th class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for correo in correos %}
+                    <tr>
+                        <td class="col-fecha">{{ correo.fecha_lectura_imap|date:"Y-m-d H:i" }}</td>
+                        <td>{{ correo.remitente }}</td>
+                        <td class="col-asunto">{{ correo.asunto|truncatechars:80 }}</td>
+                        <td>
+                            {% if correo.radicado_asociado %}
+                                <span class="badge bg-success">Radicado ({{ correo.radicado_asociado.numero_radicado }})</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendiente de Radicar</span>
+                            {% endif %}
+                        </td>
+                        <td class="col-acciones text-center">
+                            <a href="{% url 'correspondencia:detalle_correo_entrante' correo.id %}" class="btn btn-info btn-sm" title="Ver Detalle">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <!-- {# Podríamos añadir un botón para radicar directamente desde aquí si se quisiera #} -->
+                            <!-- {# -->
+                                 <!-- {% if not correo.radicado_asociado %}
+                                 <a href="#" class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center p-1" title="Radicar" style="width: 30px; height: 30px;">
+                                    <i class="bi bi-file-earmark-plus-fill" style="font-size: 1rem;"></i>
+                                </a> -->
+                                
+                                
+                            {% endif %}
+                             <!-- #} -->
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No hay correos entrantes registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- {# Paginación (si se usa Paginator en la vista) #} -->
+        {% if correos.has_other_pages %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-3">
+                    {% if correos.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primera</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ correos.previous_page_number }}">Anterior</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&laquo; Primera</span></li>
+                        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                    {% endif %}
+
+                    {% for i in correos.paginator.page_range %}
+                        {% if correos.number == i %}
+                            <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+                        {% elif i > correos.number|add:'-3' and i < correos.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        {% elif i == correos.number|add:'-3' or i == correos.number|add:'3' %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if correos.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ correos.next_page_number }}">Siguiente</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ correos.paginator.num_pages }}">Última &raquo;</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                        <li class="page-item disabled"><span class="page-link">Última &raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{# Script para inicializar DataTables si no se hace globalmente en base - COMENTADO PARA EVITAR REINICIALIZACIÓN #}
+<!-- <script>
+$(document).ready(function() {
+    $('#dataTableCorreos').DataTable({
+        responsive: true,
+        language: {
+          url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+        order: [[ 0, "desc" ]] // Ordenar por fecha descendente por defecto
+    });
+});
+</script>  -->
+{% endblock %} 

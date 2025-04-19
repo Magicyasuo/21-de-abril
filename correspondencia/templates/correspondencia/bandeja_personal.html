@@ -1,0 +1,100 @@
+{% extends 'correspondencia/base_correspondencia_usuario.html' %}
+{% load static humanize %}
+
+{% block title %}Bandeja Personal{% endblock %}
+{% block page_title %}Bandeja Personal{% endblock %}
+
+{% block content %}
+    {# Mostrar el mensaje de error si la carga falló #}
+    {% if not load_success %}
+        <div class="alert alert-danger" role="alert">
+            Hubo un problema al cargar tu bandeja de entrada (load_success=False). Por favor, revisa los logs del servidor o contacta al administrador.
+        </div>
+    {% endif %}
+
+    {# Mostrar siempre el contenedor y la tabla #}
+    <div class="table-container mt-3"> {# Añadido margen por si aparece el error #}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Bandeja Personal</h6>
+            </div>
+            <div class="card-body">
+                {% if load_success %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover datatable-correspondencia align-middle" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="col-fecha">Recibido/Asignado</th>
+                                <th>No. Radicado</th>
+                                <th class="col-remitente">Remitente</th>
+                                <th class="col-asunto">Asunto</th>
+                                <th style="width: 100px;">Estado Lectura</th>
+                                <th style="width: 120px;">Plazo Respuesta</th>
+                                <th class="col-acciones">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in correspondencias %}
+                            <tr class="{% if not item.leido_por_usuario_actual %}table-warning{% endif %}">
+                                <td class="col-fecha">
+                                    <small>{{ item.fecha_radicacion|date:"Y-m-d H:i" }}</small>
+                                </td>
+                                <td>{{ item.numero_radicado }}</td>
+                                <td class="col-remitente">{{ item.remitente.nombre_completo|default:"-" }}</td>
+                                <td class="col-asunto">{{ item.asunto|truncatechars:70 }}</td>
+                                <td class="text-center">
+                                    {% if item.total_destinatarios > 0 %}
+                                    <span class="badge {% if item.total_leidos == item.total_destinatarios %}bg-success{% elif item.total_leidos > 0 %}bg-info{% else %}bg-secondary{% endif %}">
+                                        {{ item.total_leidos }}/{{ item.total_destinatarios }}
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-light text-dark">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.requiere_respuesta %}
+                                        {% with estado_plazo=item.estado_plazo dias=item.dias_restantes %}
+                                            {% if estado_plazo == 'vencido' %}
+                                                <span class="badge bg-danger">Vencido ({{ dias }}d)</span>
+                                            {% elif estado_plazo == 'critico' %}
+                                                <span class="badge bg-danger">{{ dias }} día(s)</span>
+                                            {% elif estado_plazo == 'urgente' %}
+                                                <span class="badge bg-warning text-dark">{{ dias }} días</span>
+                                            {% elif estado_plazo == 'proximo' %}
+                                                <span class="badge bg-info text-dark">{{ dias }} días</span>
+                                            {% elif estado_plazo == 'ok' %}
+                                                <span class="badge bg-success">{{ dias }} días</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% else %}
+                                        <span class="text-muted small">No requiere</span>
+                                    {% endif %}
+                                </td>
+                                <td class="col-acciones text-center">
+                                    <a href="{% url 'correspondencia:detalle_correspondencia' item.pk %}" class="btn btn-sm btn-primary me-1" title="Ver Detalles">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    {% if item.puede_compartir %}
+                                    <a href="{% url 'correspondencia:compartir_correspondencia' item.pk %}" class="btn btn-sm btn-info" title="Compartir">
+                                        <i class="bi bi-share-fill"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No tienes correspondencia en tu bandeja personal.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                 <div class="alert alert-warning" role="alert">
+                     No se pudo cargar la información de la bandeja. Contacte al administrador.
+                 </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %} 

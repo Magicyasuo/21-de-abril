@@ -1,0 +1,73 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4 text-primary"><i class="bi bi-envelope-open-fill me-2"></i>{{ titulo_pagina }}</h2>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">Información del Correo Entrante</div>
+                <div class="card-body">
+                    <p><strong>Fecha Recepción:</strong> {{ correo.fecha_lectura_imap|date:'d/m/Y H:i' }}</p>
+                    <p><strong>Remitente:</strong> {{ correo.remitente }}</p>
+                    <p><strong>Asunto:</strong> {{ correo.asunto }}</p>
+                </div>
+            </div>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">Clasificación Sugerida (IA)</div>
+                <div class="card-body">
+                    <p><strong>Oficina:</strong> {{ correo.oficina_clasificada.nombre|default:"<span class='text-muted'>No asignada</span>"|safe }}</p>
+                    <p><strong>Serie:</strong> {{ correo.serie_clasificada.nombre|default:"<span class='text-muted'>No asignada</span>"|safe }}</p>
+                    <p><strong>Subserie:</strong> {{ correo.subserie_clasificada.nombre|default:"<span class='text-muted'>No asignada</span>"|safe }}</p>
+                </div>
+            </div>
+             <div class="card shadow-sm mb-4">
+                <div class="card-header">Cuerpo del Mensaje</div>
+                <div class="card-body" style="border: 1px solid #eee; padding: 15px; max-height: 400px; overflow-y: auto;">
+                     {% if correo.cuerpo_html %}
+                        {{ correo.cuerpo_html|safe }}
+                    {% else %}
+                        <pre>{{ correo.cuerpo_texto }}</pre>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">Archivos Adjuntos</div>
+                <div class="card-body">
+                     {% if correo.adjuntos.all %}
+                        <ul class="list-unstyled">
+                        {% for adjunto in correo.adjuntos.all %}
+                            <li class="mb-1">
+                                <a href="{{ adjunto.archivo.url }}" target="_blank" title="Descargar {{ adjunto.nombre_original }}">
+                                    <i class="bi bi-paperclip"></i> {{ adjunto.nombre_original }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No hay archivos adjuntos.</p>
+                    {% endif %}
+                </div>
+            </div>
+             <div class="card shadow-sm mb-4">
+                <div class="card-header">Acciones</div>
+                <div class="card-body text-center">
+                    <a href="{% url 'correspondencia:radicar_desde_correo' correo_id=correo.pk %}" class="btn btn-primary mb-2 w-100">
+                        <i class="bi bi-pencil-square me-1"></i> Radicar este Correo
+                    </a>
+                    <a href="{% url 'correspondencia:bandeja_clasificados' %}" class="btn btn-secondary w-100">
+                        <i class="bi bi-arrow-left me-1"></i> Volver a Bandeja
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %} 

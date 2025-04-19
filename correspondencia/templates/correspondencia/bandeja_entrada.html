@@ -1,0 +1,97 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4 text-primary"><i class="bi bi-inbox-fill me-2"></i>{{ titulo_pagina }}</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if load_success %}
+        {# Añadir contenedor y id/clase para DataTables #}
+        <div class="table-container">
+            <table id="tabla-bandeja-entrada" class="table table-striped table-hover table-bordered align-middle datatable-correspondencia">
+                <thead class="table-light">
+                    <tr>
+                        {# Añadir clases col-* para estilos #}
+                        <th scope="col" class="col-radicado">Radicado</th>
+                        <th scope="col" class="col-fecha">Fecha Rad.</th>
+                        <th scope="col" class="col-remitente">Remitente</th>
+                        <th scope="col" class="col-asunto">Asunto</th>
+                        <th scope="col" class="col-serie">Serie / Subserie</th>
+                        <th scope="col" class="col-estado">Estado</th>
+                        <th scope="col" class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Iterar sobre 'correspondencias', no 'page_obj' #}
+                    {% for correspondencia in correspondencias %}
+                    <tr class="align-middle {% if not correspondencia.leido_por_oficina %}fw-bold{% endif %}">
+                        {# Añadir clases col-* a td, quitar truncate-cell #}
+                        <td class="py-2 px-3 col-radicado">
+                            <a href="{% url 'correspondencia:detalle_correspondencia' correspondencia.pk %}" title="{{ correspondencia.numero_radicado }}">{{ correspondencia.numero_radicado }}</a>
+                        </td>
+                        <td class="py-2 px-3 col-fecha">{{ correspondencia.fecha_radicacion|date:'Y-m-d' }}</td>
+                        <td class="py-2 px-3 col-remitente" title="{{ correspondencia.remitente|default:'N/A' }}">
+                            {{ correspondencia.remitente|default:'N/A' }}
+                        </td>
+                        <td class="py-2 px-3 col-asunto wrap-text" title="{{ correspondencia.asunto }}">
+                            {{ correspondencia.asunto }}
+                        </td>
+                        <td class="py-2 px-3 col-serie" title="{{ correspondencia.serie.nombre|default:'' }}{% if correspondencia.subserie %} / {{ correspondencia.subserie.nombre }}{% endif %}">
+                            {{ correspondencia.serie.nombre|default:'N/A' }}
+                            {% if correspondencia.subserie %}
+                                <br><small class="text-muted">{{ correspondencia.subserie.nombre }}</small>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-3 col-estado">
+                            <span class="badge bg-{% if correspondencia.estado == 'DISTRIBUIDA_OFICINA' %}info{% elif correspondencia.estado == 'LEIDA' %}success{% elif correspondencia.estado == 'CON_RESPUESTA_PENDIENTE' %}warning{% else %}secondary{% endif %} text-dark">
+                                {{ correspondencia.get_estado_display }}
+                            </span>
+                             {% if not correspondencia.leido_por_oficina %}
+                                <span class="badge bg-danger ms-1">Nuevo</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-3 col-acciones actions-cell">
+                            <div class="btn-group">
+                                <a href="{% url 'correspondencia:detalle_correspondencia' correspondencia.pk %}" class="btn btn-sm btn-info" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if correspondencia.estado == 'DISTRIBUIDA_OFICINA' %}
+                                <a href="{% url 'correspondencia:redistribuir_interna' correspondencia.pk %}" class="btn btn-sm btn-primary" title="Redistribuir">
+                                    <i class="bi bi-send"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {# No hay bloque {% empty %} aquí, DataTables lo maneja #}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# --- Paginación Eliminada --- #}
+        {# {% if page_obj.has_other_pages %} ... {% endif %} #}
+
+    {% else %} {# Si load_success es False (caso de error en vista) #}
+         <div class="alert alert-danger" role="alert">
+            Ocurrió un error al cargar la bandeja de entrada. Revisa los mensajes anteriores o contacta al administrador.
+        </div>
+    {% endif %}
+
+     <div class="mt-4">
+        <a href="{% url 'correspondencia:welcome' %}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Volver al Inicio</a>
+    </div>
+
+</div>
+{% endblock %} 

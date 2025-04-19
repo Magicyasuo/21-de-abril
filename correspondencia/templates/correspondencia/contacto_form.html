@@ -1,0 +1,57 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static crispy_forms_tags %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                 <div class="card-header">
+                     <i class="bi bi-person-plus-fill me-1"></i> {{ titulo_pagina }}
+                 </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {# Renderizar el ContactoForm que ahora incluye el select de Entidad #}
+                    <form method="post">
+                         {% csrf_token %}
+                         {% crispy form %}
+                         <div class="mt-3 text-end">
+                            <button type="submit" class="btn btn-primary">Guardar Contacto</button>
+                         </div>
+                    </form>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'correspondencia:listar_contactos' %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# Incluir JS para Select2 si se usa en ContactoForm #}
+<script>
+$(document).ready(function() {
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: "Seleccione...",
+        allowClear: true
+    });
+});
+</script>
+{% endblock %} 

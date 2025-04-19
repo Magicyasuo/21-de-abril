@@ -1212,7 +1212,20 @@ def editar_registro_de_fuid(request, fuid_id, registro_id):
 
 @login_required
 def welcome_view(request):
-    return render(request, 'welcome.html')
+    """Vista de bienvenida que muestra accesos rápidos."""
+    # Determinar si el usuario pertenece al grupo 'Ventanilla'
+    es_ventanilla = False
+    if request.user.is_authenticated:
+        es_ventanilla = request.user.groups.filter(name='Ventanilla').exists()
+
+    context = {
+        'titulo_pagina': 'Bienvenido al Sistema',
+        # Pasar la variable booleana al contexto
+        'es_ventanilla': es_ventanilla,
+        # Puedes añadir otras variables de contexto necesarias para welcome.html aquí
+        # 'current_year': datetime.now().year, # Ejemplo
+    }
+    return render(request, 'welcome.html', context)
 
 
 #panel de control para administradores, solo pueden acceder los usuarios con el grupo "administradores"

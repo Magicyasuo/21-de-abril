@@ -1,14 +1,14 @@
 from django.contrib import admin
 from .models import (
     SerieDocumental, SubserieDocumental, RegistroDeArchivo, PermisoUsuarioSerie, 
-    EntidadProductora, UnidadAdministrativa, OficinaProductora, Objeto, FUID, FichaPaciente
+    EntidadProductora, UnidadAdministrativa, OficinaProductora, Objeto, FUID, FichaPaciente,
+    PerfilUsuario,
+    Documento
 )
 
 # 1) Importaciones adicionales
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import PerfilUsuario
-from .models import Documento
 
 
 # 2) Definir un inline para mostrar/editar PerfilUsuario dentro del formulario de User
@@ -17,6 +17,7 @@ class PerfilUsuarioInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = "Perfil (Oficina)"
     fk_name = "user"
+    fields = ('oficina', 'cargo')
 
 # 3) Crear un CustomUserAdmin que inyecte ese Inline
 class CustomUserAdmin(BaseUserAdmin):
@@ -158,7 +159,10 @@ class DocumentoAdmin(admin.ModelAdmin):
     archivo_size.short_description = "Tamaño"
 
 
-# @admin.register(PerfilUsuario)
-# class PerfilUsuarioAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'oficina')
-#     search_fields = ('user__username', 'oficina__nombre')
+@admin.register(PerfilUsuario)
+class PerfilUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('user', 'oficina')
+    list_filter = ('oficina__unidad_administrativa__entidad_productora', 'oficina')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name')
+    # Permitir autocompletado para seleccionar usuario y oficina
+    autocomplete_fields = ['user', 'oficina']

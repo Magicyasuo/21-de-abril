@@ -1,0 +1,56 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ titulo_pagina }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Información de la Correspondencia</h5>
+                            <p><strong>Número de Radicado:</strong> {{ correspondencia.numero_radicado }}</p>
+                            <p><strong>Remitente:</strong> {{ correspondencia.remitente }}</p>
+                            <p><strong>Asunto:</strong> {{ correspondencia.asunto }}</p>
+                            <p><strong>Oficina Destino:</strong> {{ correspondencia.oficina_destino.nombre }}</p>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="usuario">Seleccione el Usuario Destino:</label>
+                            <select class="form-control" id="usuario" name="usuario" required>
+                                <option value="">Seleccione un usuario...</option>
+                                {% for usuario in usuarios_oficina %}
+                                    <option value="{{ usuario.id }}">
+                                        {{ usuario.get_full_name|default:usuario.username }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="observaciones">Observaciones (opcional):</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Asignar Correspondencia</button>
+                            <a href="{% url 'correspondencia:pendientes_distribuir' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

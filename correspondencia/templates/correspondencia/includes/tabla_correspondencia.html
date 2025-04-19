@@ -1,0 +1,32 @@
+{% load humanize %}
+
+<div class="table-responsive">
+    <table class="table table-sm table-striped table-hover table-bordered align-middle datatable-correspondencia">
+        <thead class="table-light">
+            <tr>
+                <th class="py-2 px-3 col-radicado"># Rad.</th>
+                <th class="py-2 px-3 col-fecha">Fecha Rad.</th>
+                <th class="py-2 px-3 col-remitente">Remitente</th>
+                <th class="py-2 px-3 col-asunto">Asunto</th>
+                {% if tipo_tabla == 'oficina' %}
+                    <th class="py-2 px-3 col-usuario">Asignado a</th> {# En oficina, mostrar a quién se asignó inicialmente #}
+                {% elif tipo_tabla == 'personal' %}
+                    <th class="py-2 px-3 col-usuario">Origen</th> {# En personal, mostrar Ventanilla o quién compartió #}
+                 {% endif %}
+                <th class="py-2 px-3 col-estado">Estado</th>
+                <th class="py-2 px-3 col-acciones">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in correspondencias %}
+                {# Las variables leido_flag, origen_display y puede_compartir ahora vienen calculadas desde la vista #}
+                {% include 'correspondencia/includes/tabla_fila_correspondencia.html' with item=item tipo_tabla=tipo_tabla mostrar_boton_compartir=mostrar_boton_compartir %}
+            {% empty %}
+                <tr>
+                    {# Asegurar que el colspan coincide con el número de columnas del thead (7) #}
+                    <td colspan="7" class="text-center text-muted py-3">No hay correspondencia para mostrar.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div> 

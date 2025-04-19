@@ -1,0 +1,248 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Detalles del Correo -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Detalles del Correo Electrónico</h6>
+                <div>
+                     {% if correo.radicado_asociado %}
+                        <span class="badge bg-success fs-6 me-2">Radicado: {{ correo.radicado_asociado.numero_radicado }}</span>
+                        <a href="{% url 'correspondencia:detalle_correspondencia' correo.radicado_asociado.pk %}" class="btn btn-sm btn-outline-success" title="Ver Radicado">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Ver Radicado
+                        </a>
+                    {% else %}
+                        <span class="badge bg-warning text-dark fs-6">Pendiente de Radicar</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Remitente:</dt>
+                    <dd class="col-sm-9">{{ correo.remitente }}</dd>
+
+                    <dt class="col-sm-3">Asunto:</dt>
+                    <dd class="col-sm-9">{{ correo.asunto }}</dd>
+
+                    <dt class="col-sm-3">Fecha Recepción (Servidor):</dt>
+                    <dd class="col-sm-9">{{ correo.fecha_recepcion_original|default:"-"|date:"Y-m-d H:i:s" }}</dd>
+
+                    <dt class="col-sm-3">Fecha Lectura (Sistema):</dt>
+                    <dd class="col-sm-9">{{ correo.fecha_lectura_imap|date:"Y-m-d H:i:s" }}</dd>
+                </dl>
+                <hr>
+                <h6>Cuerpo del Mensaje:</h6>
+                {% if correo.cuerpo_html %}
+                    <!-- {# Mostrar HTML si existe, sanitizar si es necesario en producción #} -->
+                    <div class="border p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
+                         {{ correo.cuerpo_html|safe }}
+                    </div>
+                {% elif correo.cuerpo_texto %}
+                     <pre class="border p-3 bg-light" style="white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto;">{{ correo.cuerpo_texto }}</pre>
+                {% else %}
+                    <p class="text-muted"><em>No se encontró cuerpo de mensaje.</em></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Acciones -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Acciones</h6>
+            </div>
+            <div class="card-body">
+                {% if not correo.radicado_asociado %}
+                <button type="button" class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modalRadicarCorreo">
+                    <i class="bi bi-file-earmark-plus-fill me-1"></i> Radicar Manualmente
+                </button>
+                <button type="button" class="btn btn-success w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modalCrearContacto">
+                    <i class="bi bi-person-plus-fill me-1"></i> Crear Contacto
+                </button>
+                {% else %}
+                 <div class="alert alert-info" role="alert">
+                     Este correo ya ha sido radicado.
+                 </div>
+                {% endif %}
+                <a href="{% url 'correspondencia:bandeja_correos_pendientes' %}" class="btn btn-secondary w-100">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Volver a la Bandeja
+                </a>
+            </div>
+        </div>
+
+        <!-- Adjuntos -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Archivos Adjuntos</h6>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                {% if correo.adjuntos.all %}
+                    <ul class="list-group list-group-flush">
+                        {% for adjunto in correo.adjuntos.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <i class="bi bi-paperclip me-2"></i>
+                                    {{ adjunto.nombre_original|default:adjunto.archivo.name|truncatechars:40 }}
+                                    {% if adjunto.tipo_mime %}<small class="text-muted"> ({{ adjunto.tipo_mime }})</small>{% endif %}
+                                </span>
+                                <a href="{{ adjunto.archivo.url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Descargar/Ver">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center mb-0"><em>No hay archivos adjuntos.</em></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODALES ===================== -->
+
+<!-- Modal Crear Contacto -->
+<div class="modal fade" id="modalCrearContacto" tabindex="-1" aria-labelledby="modalCrearContactoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="form_prefix" value="contacto">
+                <!-- {# Identificador del formulario #} -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCrearContactoLabel">Crear Nuevo Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% crispy form_contacto %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar Contacto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Radicar Correo -->
+{% if form_radicacion %}
+<div class="modal fade" id="modalRadicarCorreo" tabindex="-1" aria-labelledby="modalRadicarCorreoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+         <!-- {# Modal más grande para el form de radicación #} -->
+        <div class="modal-content">
+            <form method="post" action="" id="form-radicar-correo">
+                {% csrf_token %}
+                <input type="hidden" name="form_prefix" value="radicar">
+                 <!-- {# Identificador del formulario #} -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalRadicarCorreoLabel">Radicar Correo Manualmente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% crispy form_radicacion %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Radicación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function() {
+    // Inicializar Select2 en los modales DESPUÉS de que se muestren
+    $('#modalCrearContacto, #modalRadicarCorreo').on('shown.bs.modal', function () {
+        $(this).find('.select2').select2({
+            theme: 'bootstrap-5',
+            dropdownParent: $(this) // Importante para que el dropdown aparezca sobre el modal
+        });
+    });
+
+    // Lógica para cargar Subseries dinámicamente en modal de radicación
+    const $serieSelect = $('#id_radicar-serie'); // Asegúrate que el ID coincide con el del form
+    const $subserieSelect = $('#id_radicar-subserie');
+    const subserieUrl = "{% url 'correspondencia:ajax_subseries' %}";
+
+    $serieSelect.change(function() {
+        const serieId = $(this).val();
+        if (serieId) {
+            $.ajax({
+                url: subserieUrl,
+                data: { 'serie_id': serieId },
+                success: function(data) {
+                    $subserieSelect.empty(); // Limpiar opciones anteriores
+                    $subserieSelect.append('<option value="">---------</option>'); // Añadir opción vacía
+                    $.each(data, function(key, value) {
+                        $subserieSelect.append('<option value="' + value.id + '">' + value.nombre + '</option>');
+                    });
+                    $subserieSelect.prop('disabled', false);
+                },
+                error: function() {
+                     console.error("Error al cargar subseries.");
+                     $subserieSelect.empty();
+                     $subserieSelect.append('<option value="">Error al cargar</option>');
+                     $subserieSelect.prop('disabled', true);
+                }
+            });
+        } else {
+            $subserieSelect.empty();
+            $subserieSelect.append('<option value="">Seleccione serie primero</option>');
+            $subserieSelect.prop('disabled', true);
+        }
+    });
+
+    // Forzar la carga inicial si ya hay una serie seleccionada (al editar o si hubo error POST)
+    if ($serieSelect.val()) {
+        $serieSelect.trigger('change');
+    }
+
+    // Lógica para mostrar/ocultar Tiempo de Respuesta en modal de radicación
+    const $requiereRespuestaCheckbox = $('#id_radicar-requiere_respuesta'); // ID del checkbox
+    const $tiempoRespuestaDiv = $('#div_id_radicar-tiempo_respuesta'); // ID del contenedor del campo
+
+    function toggleTiempoRespuesta() {
+        if ($requiereRespuestaCheckbox.is(':checked')) {
+            $tiempoRespuestaDiv.show();
+        } else {
+            $tiempoRespuestaDiv.hide();
+            // Opcional: Limpiar el valor si se desmarca
+            //$tiempoRespuestaDiv.find('select').val(''); 
+        }
+    }
+
+    // Ejecutar al cargar la página y cada vez que cambie el checkbox
+    toggleTiempoRespuesta();
+    $requiereRespuestaCheckbox.change(toggleTiempoRespuesta);
+
+    // --- Abrir modal automáticamente si hubo error en POST --- 
+    const openContacto = "{{ open_contacto_modal|yesno:'true,false' }}" === 'true';
+    const openRadicacion = "{{ open_radicacion_modal|yesno:'true,false' }}" === 'true';
+
+    if (openContacto) {
+        var contactoModal = new bootstrap.Modal(document.getElementById('modalCrearContacto'));
+        contactoModal.show();
+    }
+
+    if (openRadicacion) {
+        var radicacionModal = new bootstrap.Modal(document.getElementById('modalRadicarCorreo'));
+        radicacionModal.show();
+    }
+
+});
+</script>
+{% endblock %} 

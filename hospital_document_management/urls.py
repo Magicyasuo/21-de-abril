@@ -19,6 +19,9 @@ from django.contrib import admin
 from django.urls import path, include
 from documentos import views
 from django.shortcuts import redirect
+from django.contrib.auth.views import LoginView, LogoutView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # Admin
@@ -42,12 +45,26 @@ urlpatterns = [
     path('detalle-ficha/<int:consecutivo>/', views.detalle_ficha_paciente, name='detalle_ficha'),
     path('editar-ficha/<int:consecutivo>/', views.EditarFichaPaciente.as_view(), name='editar_ficha'),
     
-
-
-
     # Redirige la raíz del proyecto (/) a la página de registros
-    path('', lambda request: redirect('welcome')),
+    path('registros/login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('registros/logout/', LogoutView.as_view(), name='logout'),
+    path('registros/welcome/', views.welcome_view, name='welcome'),
 
+    # Incluir URLs de la app documentos (manteniendo la estructura existente)
+    path('registros/', include('documentos.urls')),
     
+    # === INCLUIR URLS DE CORRESPONDENCIA ===
+    path('registros/correspondencia/', include('correspondencia.urls', namespace='correspondencia')),
+    # === FIN ===
+
+    path('', lambda request: redirect('welcome'), name='root_redirect'),
+
+    path('accounts/', include('allauth.urls')),
 ]
+
+# Servir archivos de media en modo DEBUG
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # La siguiente línea es opcional para DEBUG si usas collectstatic y quieres servir desde STATIC_ROOT
+    # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

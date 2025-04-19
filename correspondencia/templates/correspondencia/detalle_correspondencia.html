@@ -1,0 +1,247 @@
+{% extends 'correspondencia/base_correspondencia_usuario.html' %}
+{% load static %}
+{% load humanize auth_extras %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class=\"mb-4 text-primary\"><i class=\"bi bi-file-earmark-text-fill me-2\"></i>{{ titulo_pagina }}</h2>
+
+     {% if messages %}
+        {% for message in messages %}
+            <div class=\"alert alert-{{ message.tags }} alert-dismissible fade show\" role=\"alert\">
+                {{ message }}
+                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        {# Columna Principal - Detalles #}
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    Información General
+                </div>
+                <div class="card-body">
+                     <dl class="row">
+                        <dt class="col-sm-4">Número Radicado:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.numero_radicado }}</dd>
+
+                        <dt class="col-sm-4">Fecha Radicación:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.fecha_radicacion|date:"Y-m-d H:i:s" }}</dd>
+
+                        <dt class="col-sm-4">Tipo Radicado:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.get_tipo_radicado_display }}</dd>
+
+                         <dt class="col-sm-4">Medio Recepción:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.get_medio_recepcion_display }}</dd>
+
+                        <dt class="col-sm-4">Radicado por:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.usuario_radicador.get_full_name|default:correspondencia.usuario_radicador.username|default:"Sistema" }}</dd>
+
+                        <hr class="my-3">
+
+                        <dt class="col-sm-4">Remitente:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.remitente|default:"No especificado" }}</dd>
+
+                        <dt class="col-sm-4">Asunto:</dt>
+                        <dd class="col-sm-8">{{ correspondencia.asunto }}</dd>
+
+                         <hr class="my-3">
+
+                         <dt class="col-sm-4">Oficina Destino:</dt>
+                         <dd class="col-sm-8">{{ correspondencia.oficina_destino.nombre|default:"N/A" }}</dd>
+
+                         <dt class="col-sm-4">Serie Documental:</dt>
+                         <dd class="col-sm-8">{{ correspondencia.serie.nombre|default:"N/A" }}</dd>
+
+                         <dt class="col-sm-4">Subserie Documental:</dt>
+                         <dd class="col-sm-8">{{ correspondencia.subserie.nombre|default:"N/A" }}</dd>
+
+                         <hr class="my-3">
+
+                         <dt class="col-sm-4">Requiere Respuesta:</dt>
+                         <dd class="col-sm-8">{% if correspondencia.requiere_respuesta %}Sí{% else %}No{% endif %}</dd>
+
+                         {% if correspondencia.requiere_respuesta %}
+                         <dt class="col-sm-4">Tiempo Respuesta:</dt>
+                         <dd class="col-sm-8">{{ correspondencia.get_tiempo_respuesta_display|default:"N/A" }}</dd>
+                         {% endif %}
+
+                          <dt class="col-sm-4">Estado Actual:</dt>
+                         <dd class="col-sm-8">
+                             <span class="badge bg-{% if correspondencia.estado == 'DISTRIBUIDA_OFICINA' %}info{% elif correspondencia.estado == 'LEIDA' %}success{% elif correspondencia.estado == 'CON_RESPUESTA_PENDIENTE' %}warning{% elif correspondencia.estado == 'RADICADA' %}primary{% else %}secondary{% endif %} text-white fs-6">
+                                {{ correspondencia.get_estado_display }}
+                             </span>
+                             {% if correspondencia.estado == 'DISTRIBUIDA_OFICINA' and not correspondencia.leido_por_oficina %}
+                                 <span class="badge bg-danger ms-1">Nuevo</span>
+                             {% endif %}
+                         </dd>
+                         <dt class="col-sm-4">Leído por Oficina:</dt>
+                         <dd class="col-sm-8">{% if correspondencia.leido_por_oficina %}Sí{% else %}No{% endif %}</dd>
+                    </dl>
+                </div>
+            </div>
+
+             <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    Archivos Adjuntos
+                </div>
+                <div class="card-body">
+                     {% if adjuntos %}
+                        <ul class="list-group list-group-flush">
+                            {% for adjunto in adjuntos %}
+                                <li class="list-group-item">
+                                    <a href="{{ adjunto.archivo.url }}" target="_blank">
+                                        <i class="bi bi-paperclip me-2"></i>{{ adjunto.nombre_original|default:adjunto.archivo.name|truncatechars:60 }}
+                                    </a>
+                                    <small class="text-muted ms-2">({{ adjunto.archivo.size|filesizeformat }})</small>
+                                    <small class="text-muted ms-2">- {{ adjunto.fecha_carga|date:"Y-m-d" }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No hay archivos adjuntos para esta correspondencia.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>{# Fin Columna Principal #}
+
+        {# Columna Lateral - Historial y Acciones #}
+        <div class="col-lg-4">
+             <div class="card shadow-sm mb-4">
+                 <div class="card-header">
+                    Acciones Rápidas
+                </div>
+                 <div class="card-body text-center">
+                     {# Botón Marcar Leído - ELIMINADO/REEMPLAZADO por lógica automática #}
+                     {# {% if not correspondencia.leido_por_oficina and correspondencia.estado == 'DISTRIBUIDA_OFICINA' and puede_ver %} ... {% endif %} #}
+
+                      {# Botón Compartir #}
+                      {% if puede_compartir %}
+                         <a href="{% url 'correspondencia:compartir_correspondencia' pk=correspondencia.pk %}" class="btn btn-info mb-2 w-100">
+                             <i class="bi bi-share-fill me-1"></i> Compartir con Oficina
+                         </a>
+                      {% endif %}
+
+                      {# Botón Responder - ACTUALIZADO #}
+                      {% comment %}
+                        Condiciones para mostrar el botón Responder:
+                        1. La correspondencia debe requerir respuesta.
+                        2. El usuario actual debe tener permiso para responder (ser de la oficina y asignado/compartido).
+                        3. No debe existir ya una respuesta en estado 'BORRADOR' o 'PENDIENTE_APROBACION'. 
+                           Se permite responder si existe una 'RECHAZADA'.
+                      {% endcomment %}
+                      {% with respuesta_pendiente=correspondencia.respuestas_salientes.first %}
+                          {% if correspondencia.requiere_respuesta and puede_responder %}
+                              {% if not respuesta_pendiente or respuesta_pendiente.estado == 'RECHAZADA' %}
+                                  <a href="{% url 'correspondencia:crear_respuesta' correspondencia_entrada_id=correspondencia.pk %}" class="btn btn-primary mb-2 w-100">
+                                    <i class="bi bi-reply-fill me-1"></i> 
+                                    {% if respuesta_pendiente %}Reintentar Respuesta{% else %}Responder{% endif %}
+                                 </a> 
+                              {% else %}
+                                  <button class="btn btn-outline-primary mb-2 w-100" disabled>
+                                      <i class="bi bi-hourglass-split me-1"></i> Respuesta en Proceso ({{ respuesta_pendiente.get_estado_display }})
+                                  </button>
+                              {% endif %}
+                          {% endif %}
+                      {% endwith %}
+
+                      {# Botón Redistribuir (Ejemplo, necesita su propia vista/lógica) #}
+                      <a href="#" class="btn btn-secondary mb-2 w-100 disabled">
+                        <i class="bi bi-arrow-repeat me-1"></i> Redistribuir
+                     </a> 
+
+                     {# Botón Volver Inteligente #}
+                     {% if request.user|has_group:"Ventanilla" %}
+                         <a href="{% url 'correspondencia:pendientes_distribuir' %}" class="btn btn-outline-secondary w-100">
+                             <i class="bi bi-arrow-left me-1"></i> Volver a Pendientes
+                         </a>
+                     {% else %}
+                         {# Usuario normal vuelve a su bandeja personal por defecto #}
+                         <a href="{% url 'correspondencia:bandeja_personal' %}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-left me-1"></i> Volver a Mi Bandeja
+                        </a>
+                     {% endif %}
+
+                 </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    Historial de Eventos
+                </div>
+                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <div class="timeline">
+                        {% for evento in historial %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-{% if evento.evento == 'RADICACION' %}primary{% elif evento.evento == 'DISTRIBUCION' %}info{% elif evento.evento == 'LECTURA' %}success{% elif evento.evento == 'RESPUESTA' %}warning{% else %}secondary{% endif %}"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <span class="badge bg-{% if evento.evento == 'RADICACION' %}primary{% elif evento.evento == 'DISTRIBUCION' %}info{% elif evento.evento == 'LECTURA' %}success{% elif evento.evento == 'RESPUESTA' %}warning{% else %}secondary{% endif %}">{{ evento.get_evento_display }}</span>
+                                    <small class="text-muted ms-2">{{ evento.fecha_hora|date:"Y-m-d H:i:s" }}</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <small class="text-muted">Por: {{ evento.usuario.username|default:"Sistema" }}</small>
+                                    {% if evento.descripcion %}
+                                    <p class="mb-0 mt-1">{{ evento.descripcion|linebreaksbr }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                 </div>
+            </div>
+
+            <!-- NUEVO: Estado de Lectura Detallado -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Estado de Lectura</h6>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    {% if usuarios_que_leyeron %}
+                        <p>Leído por:</p>
+                        <ul class="list-group list-group-flush">
+                            {% for usuario_lector in usuarios_que_leyeron %}
+                                <li class="list-group-item">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    {{ usuario_lector.get_full_name|default:usuario_lector.username }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0"><em>Aún no ha sido leído por ningún destinatario.</em></p>
+                    {% endif %}
+                    
+                    <!-- {# Opcional: Mostrar también quiénes NO lo han leído #} -->
+                    <!-- {#  -->
+                    {% with todos_destinatarios=correspondencia.distribuciones_internas.all %} 
+                        {% if todos_destinatarios %}
+                        <hr>
+                        <p class="mt-3">Pendiente por leer:</p>
+                        <ul class="list-group list-group-flush">
+                            {% for distribucion in todos_destinatarios %}
+                                {% if not distribucion.leido %}
+                                <li class="list-group-item">
+                                    <i class="bi bi-hourglass-split text-warning me-2"></i>
+                                    {{ distribucion.usuario_asignado.get_full_name|default:distribucion.usuario_asignado.username }}
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    {% endwith %}
+                    <!-- #} -->
+                </div>
+            </div>
+            <!-- FIN Estado de Lectura Detallado -->
+
+        </div> {# Fin Columna Lateral #}
+    </div> {# Fin Row #}
+</div>
+{% endblock %} 

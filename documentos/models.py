@@ -261,6 +261,7 @@ from django.contrib.auth.models import User
 class PerfilUsuario(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     oficina = models.ForeignKey(OficinaProductora, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=150, blank=True, null=True, help_text="Cargo del usuario (opcional)")
 
     def __str__(self):
         return f"{self.user.username} - {self.oficina.nombre}"

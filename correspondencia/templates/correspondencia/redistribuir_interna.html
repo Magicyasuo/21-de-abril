@@ -1,0 +1,62 @@
+{% extends 'correspondencia/base_correspondencia.html' %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block page_title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Redistribuir Correspondencia</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Número Radicado:</strong> {{ correspondencia.numero_radicado }}</p>
+                    <p><strong>Asunto:</strong> {{ correspondencia.asunto }}</p>
+                    <p><strong>Remitente:</strong> {{ correspondencia.remitente }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Fecha Radicación:</strong> {{ correspondencia.fecha_radicacion|date:"Y-m-d H:i" }}</p>
+                    <p><strong>Oficina Destino:</strong> {{ correspondencia.oficina_destino.nombre }}</p>
+                    {% if correspondencia.requiere_respuesta %}
+                    <p><strong>Tiempo Respuesta:</strong> {{ correspondencia.get_tiempo_respuesta_display }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Seleccionar Usuario</label>
+                    <select class="form-select" id="usuario" name="usuario" required>
+                        <option value="">Seleccione un usuario...</option>
+                        {% for usuario in usuarios_oficina %}
+                        <option value="{{ usuario.id }}">
+                            {{ usuario.get_full_name|default:usuario.username }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="observaciones" class="form-label">Observaciones</label>
+                    <textarea class="form-control" id="observaciones" name="observaciones" rows="3" 
+                              placeholder="Opcional: agregue observaciones sobre la redistribución"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'bandeja_entrada' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Redistribuir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

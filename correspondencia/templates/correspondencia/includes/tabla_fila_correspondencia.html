@@ -1,0 +1,47 @@
+{% load humanize %}
+
+{# La variable 'item' ya viene con 'leido_flag' y 'origen_display' calculados #}
+<tr class="align-middle {% if not item.leido_flag %}fw-bold{% endif %}">
+    {# Radicado - Enlace a detalle #}
+    <td class="py-2 px-3 col-radicado">
+        <a href="{% url 'correspondencia:detalle_correspondencia' pk=item.pk %}" title="Ver detalle">{{ item.numero_radicado }}</a>
+    </td>
+    <td class="py-2 px-3 col-fecha">{{ item.fecha_radicacion|date:"Y-m-d" }}</td>
+    <td class="py-2 px-3 col-remitente" title="{{ item.remitente }}">{{ item.remitente|default:"-"|truncatechars:25 }}</td>
+    <td class="py-2 px-3 col-asunto wrap-text" title="{{ item.asunto }}">{{ item.asunto|truncatechars:40 }}</td>
+    
+    {# Columna dinámica: Asignado a (Oficina) / Origen (Personal) #}
+    <td class="py-2 px-3 col-usuario">
+        {% if tipo_tabla == 'oficina' %}
+            {% if item.usuario_destino_inicial %}
+                {{ item.usuario_destino_inicial.get_full_name|default:item.usuario_destino_inicial.username }}
+            {% else %}
+                A Oficina (Sin Asignar)
+            {% endif %}
+        {% elif tipo_tabla == 'personal' %}
+            {{ item.origen_display|default:"N/A" }} {# Usar la variable calculada #}
+        {% endif %}
+    </td>
+
+    {# Estado (Leído/No Leído) #}
+    <td class="py-2 px-3 col-estado">
+        {% if not item.leido_flag %} {# Usar la variable calculada #}
+            <span class="badge bg-danger">Nuevo</span>
+        {% else %}
+            <span class="badge bg-light text-dark">Leído</span>
+        {% endif %}
+    </td>
+    
+    {# Acciones #}
+    <td class="py-2 px-3 col-acciones text-center">
+        <a href="{% url 'correspondencia:detalle_correspondencia' pk=item.pk %}" class="btn btn-sm btn-outline-primary me-1" title="Ver Detalle">
+            <i class="bi bi-eye"></i>
+        </a>
+        {# Botón compartir solo en bandeja personal y si la vista lo permite y el item lo permite #}
+        {% if tipo_tabla == 'personal' and mostrar_boton_compartir and item.puede_compartir %}
+           <a href="{% url 'correspondencia:compartir_correspondencia' pk=item.pk %}" class="btn btn-sm btn-outline-info" title="Compartir">
+               <i class="bi bi-share"></i>
+           </a>
+        {% endif %}
+    </td>
+</tr> 

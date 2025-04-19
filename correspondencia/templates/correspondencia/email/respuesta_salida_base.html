@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ respuesta.asunto }}</title> {# Asunto también se define en send_mail #}
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .footer {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 25px;
+            font-size: 0.85em;
+            color: #777;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            {# Podrías añadir un logo aquí si lo tienes configurado #}
+            <strong>Hospital del Sarare E.S.E.</strong> - Respuesta a su comunicación
+        </div>
+
+        <div class="content">
+            {# El cuerpo escrito por el usuario se insertará aquí desde la vista #}
+            {{ cuerpo_respuesta|linebreaksbr|safe }} 
+        </div>
+
+        <div class="footer">
+            <p>
+                Atentamente,<br><br>
+                <strong>{{ nombre_funcionario }}</strong><br>
+                {{ cargo_funcionario }}<br>
+                {{ nombre_oficina }}<br>
+                Hospital del Sarare E.S.E.
+            </p>
+            <p>
+                <em>Este es un mensaje enviado automáticamente desde el Sistema de Gestión Documental. Por favor, no responda directamente a este correo.</em>
+            </p>
+             {# Podrías añadir información de contacto general del hospital aquí #}
+        </div>
+    </div>
+</body>
+</html> 

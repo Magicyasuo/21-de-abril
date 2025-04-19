@@ -1,0 +1,252 @@
+Listado de Requerimientos para el Módulo de Correspondencia
+
+Tipos de Correspondencia
+
+Se manejarán dos tipos principales:
+
+Correspondencia Entrante Externa (de otras instituciones o ciudadanos).
+
+Correspondencia Circular Interna (dirigida a múltiples áreas internas).
+
+Radicación
+
+La radicación la realiza un usuario de "ventanilla única" o "usuario_sistema_virtual" (para el caso de correspondencia electrónica).
+
+El sistema debe generar un número de radicado único basado en el tipo y el año. Ejemplo:
+
+"ENTRANTE-2025-00001"
+
+"CIRCULAR-2025-00001"
+
+Al radicar, se registra además:
+
+Fecha/hora de radicación.
+
+Serie y Subserie (FK a los modelos existentes de clasificación documental).
+
+Asunto o descripción breve.
+
+Campo requiere_respuesta (booleano).
+
+Si requiere respuesta, asignar tiempo_respuesta (Normal, Urgente o Muy Urgente).
+
+Se marca la correspondencia como "recibida" y "radicada" en un solo paso.
+
+Campos y Estados Adicionales
+
+Medio: Físico o Electrónico.
+
+Estado: control interno con posibles valores:
+
+PRE_PROCESADA (cuando la IA clasifica un correo entrante de forma automática pero el usuario aún no confirma).
+
+RECIBIDA / RADICADA (ya confirmada y visible para la distribución).
+
+Otros estados se registrarán en la tabla de historial (ver punto 7).
+
+Distribución Inicial
+
+Al finalizar la radicación, la correspondencia se asigna a:
+
+Una Oficina (OficinaProductora).
+
+(Opcional) Un Usuario específico dentro de esa oficina.
+
+Se crean registros en las tablas de distribución:
+
+DistribucionOficina (FK a Correspondencia + FK a OficinaProductora).
+
+DistribucionUsuario (FK a Correspondencia + FK a User).
+
+Desde la "ventanilla única" se decide a qué oficina/usuario se envía inicialmente.
+
+Bandejas de Entrada
+
+Cada usuario tendrá dos bandejas:
+
+Bandeja Personal: contiene los radicados dirigidos a él específicamente.
+
+Bandeja de Oficina: contiene los radicados dirigidos a su oficina.
+
+Si el usuario fue asignado individualmente y además la oficina es la suya, verá el mismo radicado en ambas bandejas.
+
+Lectura y Redistribución
+
+Al abrir un radicado, se marca como "leído" (se registra en el historial).
+
+El usuario puede "redistribuir" el documento a otros usuarios dentro de la misma oficina.
+
+No se puede cambiar a otra oficina en esta etapa.
+
+Si la correspondencia requiere respuesta, se muestra claramente para que el usuario responsable esté al tanto.
+
+Historial de Estados / Trazabilidad
+
+Se mantiene un modelo de historial donde se guardan:
+
+Fecha/hora.
+
+Evento (RADICADA, DISTRIBUIDA, LEÍDA, REDISTRIBUIDA, EN_ESPERA_DE_RESPUESTA, etc.).
+
+Usuario responsable de la acción, cuando aplique.
+
+Esto permite auditar el ciclo de vida de la correspondencia.
+
+Correspondencia Electrónica (Automatización con IA)
+
+Se implementa un flujo que lea correos desde una cuenta institucional (IMAP).
+
+Se guardan temporalmente en un modelo CorreoEntrante (con campos remitente, asunto, cuerpo, adjuntos, etc.).
+
+Se usa un clasificador IA (Zero-Shot) para predecir:
+
+Tipo de documento (oficio, circular, derecho de petición, etc.).
+
+Oficina destino.
+
+Urgencia, requiere respuesta, etc.
+
+Se genera la correspondencia con estado "PRE_PROCESADA".
+
+Un usuario revisa y confirma si se radica definitivamente (botón de confirmar radicación), pasando a "RADICADA"/"RECIBIDA".
+
+Respuesta a la Correspondencia
+
+Si requiere_respuesta es True, la bandeja debe mostrar ese indicador.
+
+La generación de la respuesta (correspondencia saliente) no se implementa en este módulo.
+
+En la fase actual solo se deja visible el recordatorio de respuesta pendiente; la emisión formal se hará en un módulo posterior.
+
+Seguridad y Permisos
+
+Se aprovechan los modelos ya existentes de usuario, oficina y PerfilUsuario.
+
+Los permisos se controlan según el rol (ventanilla única, usuario interno, etc.).
+
+El usuario "sistema_virtual" es el responsable de radicar automáticamente los correos entrantes procesados por la IA, en fase "PRE_PROCESADA".
+
+Resumen del Flujo Completo
+
+Un correo llega (o un documento físico se recibe).
+
+(Físico) Ventanilla única radica → se asigna a oficina/usuario.
+
+(Electrónico) Script IMAP captura el correo → IA clasifica → se crea Correspondencia "PRE_PROCESADA" → el usuario la revisa/edita → confirma radicación (cambia a "RADICADA").
+
+El radicado aparece en la bandeja de la oficina/usuario designado.
+
+Al abrir, se marca como leído, y si se requiere, se redistribuye internamente.
+
+(Futuro) Para correspondencia con respuesta, se usará un módulo posterior de "correspondencia saliente".
+
+Con estos puntos cubrimos tanto la recepción manual de correspondencia física como la recepción automática de correos electrónicos con IA, unificándolo en un mismo módulo de Correspondencia Entrante.
+
+FALENCIAS Y FUNCIONALIDADES FALTANTES:
+
+1. Vistas de Listado y Tablas de Datos:
+   - Búsqueda/Histórico General de Correspondencia:
+     * Falta una vista que permita buscar toda la correspondencia radicada con filtros avanzados
+     * Necesita formulario de búsqueda con filtros por fechas, remitente, asunto, número radicado
+     * Requiere implementación de DataTables con funcionalidad de búsqueda avanzada
+
+   - Reportes y Estadísticas:
+     * Falta vista de correspondencia pendiente de respuesta por oficina
+     * Falta vista de correspondencia por vencer (basado en tiempo_respuesta)
+     * Falta vista de volumen de correspondencia por serie/oficina en periodos
+     * Necesita implementación de gráficos y visualizaciones de datos
+
+   - Gestión de Correspondencia Saliente:
+     * No existe funcionalidad para gestionar correspondencia que el hospital envía
+     * Falta formulario de creación de correspondencia saliente
+     * Falta bandeja de borradores de correspondencia saliente
+     * Falta bandeja de correspondencia enviada
+
+   - Gestión de Asignaciones:
+     * No existe funcionalidad de asignación de correspondencia a usuarios específicos
+     * Falta bandeja de asignaciones personales
+     * Falta vista de asignaciones pendientes por usuario
+
+2. Automatización y Procesamiento:
+   - Clasificación Automática:
+     * La clasificación por IA está implementada pero podría mejorarse
+     * Falta sistema de retroalimentación para mejorar la precisión
+     * Falta registro de métricas de precisión de la clasificación
+
+   - Radicación Automática:
+     * El proceso de radicación automática podría optimizarse
+     * Falta sistema de reintentos para casos de fallo temporal
+     * Falta registro detallado de errores en radicación automática
+
+3. Seguridad y Auditoría:
+   - Falta sistema de logs detallados de acciones de usuarios
+   - Falta sistema de auditoría de cambios en correspondencia
+   - Falta sistema de notificaciones para acciones críticas
+   - Falta sistema de respaldo y recuperación de datos
+
+4. Integración y API:
+   - Falta API REST para integración con otros sistemas
+   - Falta documentación de API
+   - Falta sistema de webhooks para eventos importantes
+
+5. Interfaz de Usuario:
+   - Falta sistema de temas personalizables
+   - Falta modo oscuro
+   - Falta sistema de preferencias de usuario
+   - Falta sistema de notificaciones en tiempo real
+
+6. Optimización y Rendimiento:
+   - Falta sistema de caché para consultas frecuentes
+   - Falta optimización de consultas a base de datos
+   - Falta sistema de indexación para búsquedas rápidas
+
+7. Documentación:
+   - Falta documentación técnica detallada
+   - Falta manual de usuario
+   - Falta guías de implementación
+   - Falta documentación de API
+
+8. Testing y Calidad:
+   - Falta suite de pruebas automatizadas
+   - Falta pruebas de integración
+   - Falta pruebas de rendimiento
+   - Falta sistema de monitoreo de errores
+
+9. Mantenimiento y Soporte:
+   - Falta sistema de tickets de soporte
+   - Falta sistema de actualizaciones automáticas
+   - Falta sistema de backup automático
+   - Falta sistema de monitoreo de salud del sistema
+
+10. Escalabilidad:
+    - Falta sistema de balanceo de carga
+    - Falta sistema de replicación de base de datos
+    - Falta sistema de caché distribuido
+    - Falta sistema de colas para procesamiento asíncrono
+
+PRIORIDADES RECOMENDADAS:
+
+1. Alta Prioridad:
+   - Implementar Búsqueda/Histórico General de Correspondencia
+   - Implementar sistema de logs y auditoría
+   - Implementar sistema de notificaciones
+   - Implementar suite de pruebas básicas
+
+2. Media Prioridad:
+   - Implementar Reportes y Estadísticas básicas
+   - Implementar API REST básica
+   - Implementar sistema de documentación
+   - Implementar sistema de backup
+
+3. Baja Prioridad:
+   - Implementar Gestión de Correspondencia Saliente
+   - Implementar sistema de temas y preferencias
+   - Implementar sistema de tickets de soporte
+   - Implementar sistema de escalabilidad
+
+
+
+
+
+
+
